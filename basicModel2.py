@@ -1,4 +1,3 @@
-__author__ = 'rencui'
 import numpy
 import json
 from textstat.textstat import textstat
