@@ -12,7 +12,8 @@ from tokenizer import simpleTokenize
 import logging
 from scipy.sparse import hstack, csr_matrix
 from sklearn import svm
-#from sklearn.neural_network import MLPClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 
 stemmer = PorterStemmer()
 logging.basicConfig()
@@ -65,7 +66,7 @@ def POSRatio(inputList):
 
 # vectorMode 1: tfidf, 2: binaryCount
 # featureMode 0: semantic only, 1: vector only, 2: both
-def run(groupSize, groupTitle, vectorMode, featureMode, outputFile='result.output'):
+def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='result.output'):
     resultFile = open(outputFile, 'a')
     mentionMapper = mapMention('adData/analysis/ranked/mention.json')
 
@@ -273,8 +274,13 @@ def run(groupSize, groupTitle, vectorMode, featureMode, outputFile='result.outpu
             print 'case ' + str(i)
             feature_train, feature_test, label_train, label_test = cross_validation.train_test_split(features, classes, test_size=0.2, random_state=0)
 
-            #model = MLPClassifier(algorithm='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
-            model = svm.SVC()
+            if trainMode == 'MLP':
+                # this requires scikit-learn 0.18
+                model = MLPClassifier(algorithm='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
+            elif trainMode == 'RF':
+                model = ExtraTreesClassifier(n_estimators=50, random_state=0)
+            else:
+                model = svm.SVC()
 
             model.fit(feature_train, label_train)
             predictions = model.predict(feature_test)
@@ -330,11 +336,12 @@ def run(groupSize, groupTitle, vectorMode, featureMode, outputFile='result.outpu
 # featureMode 0: semantic only, 1: vector only, 2: embedding only, 3: embedding and semantic, 4: semantic and vector
 outputFilename = 'results/temp.result'
 
-run(3, 'brandGroup', 0, 0, outputFile=outputFilename)
-#run(3, 'subBrandGroup', 0, 0, outputFile=outputFilename)
-run(5, 'topicGroup', 0, 0, outputFile=outputFilename)
-run(5, 'simGroup', 0, 0, outputFile=outputFilename)
-run(1, 'totalGroup', 0, 0, outputFile=outputFilename)
+run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
+#run(3, 'subBrandGroup', 0, 0, 'SVM',outputFile=outputFilename)
+run(5, 'topicGroup', 0, 0, 'SVM', outputFile=outputFilename)
+run(5, 'simGroup', 0, 0, 'SVM', outputFile=outputFilename)
+run(1, 'totalGroup', 0, 0, 'SVM', outputFile=outputFilename)
+
 '''
 #run(3, 'brandGroup', 2, 1, outputFile=outputFilename)
 #run(3, 'subBrandGroup', 2, 1, outputFile=outputFilename)
