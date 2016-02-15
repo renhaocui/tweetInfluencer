@@ -331,27 +331,27 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
     resultFile.close()
 
 
+def runModel():
+    # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
+    # featureMode 0: semantic only, 1: vector only, 2: embedding only, 3: embedding and semantic, 4: semantic and vector
+    outputFilename = 'results/temp.result'
 
-# vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
-# featureMode 0: semantic only, 1: vector only, 2: embedding only, 3: embedding and semantic, 4: semantic and vector
-outputFilename = 'results/temp.result'
+    run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    #run(3, 'subBrandGroup', 0, 0, 'SVM',outputFile=outputFilename)
+    run(5, 'topicGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    run(5, 'simGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    run(1, 'totalGroup', 0, 0, 'SVM', outputFile=outputFilename)
 
-run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
-#run(3, 'subBrandGroup', 0, 0, 'SVM',outputFile=outputFilename)
-run(5, 'topicGroup', 0, 0, 'SVM', outputFile=outputFilename)
-run(5, 'simGroup', 0, 0, 'SVM', outputFile=outputFilename)
-run(1, 'totalGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    '''
+    #run(3, 'brandGroup', 2, 1, outputFile=outputFilename)
+    #run(3, 'subBrandGroup', 2, 1, outputFile=outputFilename)
+    #run(5, 'topicGroup', 2, 1, outputFile=outputFilename)
+    #run(5, 'simGroup', 2, 1, outputFile=outputFilename)
+    run(1, 'totalGroup', 2, 1, outputFile=outputFilename)
 
-'''
-#run(3, 'brandGroup', 2, 1, outputFile=outputFilename)
-#run(3, 'subBrandGroup', 2, 1, outputFile=outputFilename)
-#run(5, 'topicGroup', 2, 1, outputFile=outputFilename)
-#run(5, 'simGroup', 2, 1, outputFile=outputFilename)
-run(1, 'totalGroup', 2, 1, outputFile=outputFilename)
-
-run(3, 'brandGroup', 2, 4, outputFile=outputFilename)
-run(3, 'subBrandGroup', 2, 4, outputFile=outputFilename)
-run(5, 'topicGroup', 2, 4, outputFile=outputFilename)
-run(5, 'simGroup', 2, 4, outputFile=outputFilename)
-run(1, 'totalGroup', 2, 4, outputFile=outputFilename)
-'''
+    run(3, 'brandGroup', 2, 4, outputFile=outputFilename)
+    run(3, 'subBrandGroup', 2, 4, outputFile=outputFilename)
+    run(5, 'topicGroup', 2, 4, outputFile=outputFilename)
+    run(5, 'simGroup', 2, 4, outputFile=outputFilename)
+    run(1, 'totalGroup', 2, 4, outputFile=outputFilename)
+    '''

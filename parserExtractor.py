@@ -108,5 +108,3 @@ def extractor():
     posHeadCountFile.close()
     negHeadCountFile.close()
 
-
-extractor()

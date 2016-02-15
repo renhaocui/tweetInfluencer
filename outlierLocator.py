@@ -173,5 +173,3 @@ def outlierExtractor():
     outputDistFile.close()
     statFile.close()
     expFile.close()
-
-outlierExtractor()

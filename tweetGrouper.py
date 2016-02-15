@@ -582,9 +582,9 @@ def similarityGrouper2(groupSize):
     posDetailFile.close()
     negDetailFile.close()
 
-
-#totalGrouper()
-#brandGrouper('subBrandGroup', 3)
-#brandGrouper('brandGroup', 3)
-#topicGrouper(5)
-similarityGrouper(5)
+def runGrouper():
+    totalGrouper()
+    brandGrouper('subBrandGroup', 3)
+    brandGrouper('brandGroup', 3)
+    topicGrouper(5)
+    similarityGrouper(5)

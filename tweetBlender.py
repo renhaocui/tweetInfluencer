@@ -80,5 +80,3 @@ def blend(fileSize, offset):
             combinedOutFile.write(json.dumps(tweet)+'\n')
         outputFile.close()
     combinedOutFile.close()
-
-blend(295, 0)

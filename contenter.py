@@ -40,5 +40,5 @@ def contenter2():
     outputFile1.close()
     outputFile2.close()
 
-contenter2()
+
 #contenter([0,1,2,3,4, 'Total'])
