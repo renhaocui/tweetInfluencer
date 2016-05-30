@@ -52,3 +52,5 @@ Temporary Items
 .idea/.name
 .idea/vcs.xml
 .idea/misc.xml
+*.pyc
+*.result

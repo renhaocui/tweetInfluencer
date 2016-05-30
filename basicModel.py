@@ -4,7 +4,6 @@ import subprocess
 import numpy
 import json
 from textstat.textstat import textstat
-import utilities
 from sklearn.feature_extraction.text import *
 from nltk.stem.porter import *
 from sklearn import cross_validation
@@ -14,6 +13,8 @@ from scipy.sparse import hstack, csr_matrix
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_auc_score
 
 stemmer = PorterStemmer()
 logging.basicConfig()
@@ -268,6 +269,7 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
         precisionSum = 0.0
         recallSum = 0.0
         accuracySum = 0.0
+        aucSum = 0.0
         resultFile.flush()
         print 'running 5-fold CV...'
         for i in range(5):
@@ -275,7 +277,7 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
             feature_train, feature_test, label_train, label_test = cross_validation.train_test_split(features, classes, test_size=0.2, random_state=0)
 
             if trainMode == 'MLP':
-                # this requires scikit-learn 0.18
+                #this requires scikit-learn 0.18
                 model = MLPClassifier(algorithm='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
             elif trainMode == 'RF':
                 model = ExtraTreesClassifier(n_estimators=50, random_state=0)
@@ -303,6 +305,10 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
             recall = correctCount / label_test.count(1)
             accuracy = model.score(feature_test, label_test)
 
+            auc = roc_auc_score(label_test, predictions)
+            aucSum += auc
+            #print confusion_matrix(label_test, predictions)
+
             precisionSum += precision
             recallSum += recall
             accuracySum += accuracy
@@ -320,6 +326,7 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
         print outputRecall
         print outputAccuracy
         print outputF1
+        print aucSum/5
         print ''
         resultFile.write(str(outputPrecision) + '\n')
         resultFile.write(str(outputRecall) + '\n')
@@ -333,16 +340,22 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
 
 def runModel():
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
-    # featureMode 0: semantic only, 1: vector only, 2: embedding only, 3: embedding and semantic, 4: semantic and vector
+    # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
     outputFilename = 'results/temp.result'
 
-    run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
-    #run(3, 'subBrandGroup', 0, 0, 'SVM',outputFile=outputFilename)
-    run(5, 'topicGroup', 0, 0, 'SVM', outputFile=outputFilename)
-    run(5, 'simGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    run(1, 'totalGroup', 0, 0, 'MLP', outputFile=outputFilename)
+    run(1, 'totalGroup', 2, 1, 'MLP', outputFile=outputFilename)
+    run(1, 'totalGroup', 0, 0, 'RF', outputFile=outputFilename)
     run(1, 'totalGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    run(1, 'totalGroup', 2, 4, 'SVM', outputFile=outputFilename)
 
     '''
+    #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    #run(3, 'subBrandGroup', 0, 0, 'SVM',outputFile=outputFilename)
+    #run(5, 'topicGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    #run(5, 'simGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    #run(1, 'totalGroup', 0, 0, 'RF', outputFile=outputFilename)
+
     #run(3, 'brandGroup', 2, 1, outputFile=outputFilename)
     #run(3, 'subBrandGroup', 2, 1, outputFile=outputFilename)
     #run(5, 'topicGroup', 2, 1, outputFile=outputFilename)
