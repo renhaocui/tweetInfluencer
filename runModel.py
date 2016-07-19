@@ -2,81 +2,47 @@ __author__ = 'rencui'
 from afinn import Afinn
 import subprocess
 import numpy
-import json
+import utilities
 from textstat.textstat import textstat
 from sklearn.feature_extraction.text import *
 from nltk.stem.porter import *
 from sklearn import cross_validation
 from tokenizer import simpleTokenize
-import logging
 from scipy.sparse import hstack, csr_matrix
 from sklearn import svm
-from sklearn.neural_network import MLPClassifier
+# from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.metrics import confusion_matrix
+# from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_auc_score
+from sklearn.ensemble import AdaBoostClassifier
 
-stemmer = PorterStemmer()
-logging.basicConfig()
 dayMapper = {'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6, 'Sun': 7}
 
-def hourMapper(hour):
-    input = int(hour)
-    if 0 <= input < 6:
-        output = 0
-    elif 6 <= input < 12:
-        output = 1
-    elif 12 <= input < 18:
-        output = 2
-    else:
-        output = 3
-    return output
+stemmer = PorterStemmer()
 
-def mapMention(inputFile):
-    mentionFile = open(inputFile, 'r')
-    outputMapper = {}
-    for line in mentionFile:
-        mention = json.loads(line.strip())
-        if mention['verified'] == 'true':
-            verify = 1
-        else:
-            verify = 0
-        outputMapper[mention['screen_name']] = (verify, mention['followers_count'])
-    mentionFile.close()
-    return outputMapper
 
 def stemContent(input):
     words = simpleTokenize(input)
     out = ''
     for word in words:
         temp = stemmer.stem(word)
-        out += temp+' '
+        out += temp + ' '
     return out.strip()
 
-def POSRatio(inputList):
-    out = []
-    temp = []
-    for item in inputList:
-        temp.append(float(item))
-    if sum(temp) == 0:
-        out = [0.0, 0.0, 0.0]
-    else:
-        for item in temp:
-            out.append(item/sum(temp))
-    return out
 
 # vectorMode 1: tfidf, 2: binaryCount
 # featureMode 0: semantic only, 1: vector only, 2: both
-def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='result.output'):
+def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='result.output'):
     resultFile = open(outputFile, 'a')
-    mentionMapper = mapMention('adData/analysis/ranked/mention.json')
+    mentionMapper = utilities.mapMention('adData/analysis/ranked/mention.json')
 
     print groupTitle
     resultFile.write(groupTitle + '\n')
     for group in range(groupSize):
         print 'group: ' + str(group)
         resultFile.write('group: ' + str(group) + '\n')
-        #happy_log_probs, sad_log_probs = utilities.readSentimentList('twitter_sentiment_list.csv')
+        # happy_log_probs, sad_log_probs = utilities.readSentimentList('twitter_sentiment_list.csv')
         afinn = Afinn()
         posFile = open('adData/analysis/groups/' + groupTitle + '/group' + str(group) + '.pos', 'r')
         negFile = open('adData/analysis/groups/' + groupTitle + '/group' + str(group) + '.neg', 'r')
@@ -106,7 +72,7 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
             seg = line.strip().split(' :: ')
             text = seg[3]
             username = seg[7].split(';')
-            time.append(hourMapper(seg[2]))
+            time.append(utilities.hourMapper(seg[2]))
             day = seg[1]
             score = float(seg[0])
             ids.append(seg[5])
@@ -120,7 +86,7 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
             seg = line.strip().split(' :: ')
             text = seg[3]
             username = seg[7].split(';')
-            time.append(hourMapper(seg[2]))
+            time.append(utilities.hourMapper(seg[2]))
             day = seg[1]
             score = float(seg[0])
             ids.append(seg[5])
@@ -167,9 +133,9 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
         for line in negHeadCountFile:
             headCount.append(int(line.strip(' :: ')[0]))
         for line in posPOSCountFile:
-            POScounts.append(POSRatio(line.strip().split(' :: ')[0].split(' ')))
+            POScounts.append(utilities.POSRatio(line.strip().split(' :: ')[0].split(' ')))
         for line in negPOSCountFile:
-            POScounts.append(POSRatio(line.strip().split(' :: ')[0].split(' ')))
+            POScounts.append(utilities.POSRatio(line.strip().split(' :: ')[0].split(' ')))
 
         posHeadCountFile.close()
         negHeadCountFile.close()
@@ -185,40 +151,40 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
             words = simpleTokenize(content)
             twLen = float(len(words))
             sentiScore = afinn.score(stemContent(content))
-            #posProb, negProb = utilities.classifySentiment(words, happy_log_probs, sad_log_probs)
+            # posProb, negProb = utilities.classifySentiment(words, happy_log_probs, sad_log_probs)
             readScore = textstat.coleman_liau_index(content)
 
             temp.append(twLen)
 
-            #temp.append(content.count('URRL'))
+            # temp.append(content.count('URRL'))
             if content.count('URRL') > 0:
                 temp.append(1)
             else:
                 temp.append(0)
-            #temp.append(content.count('HHTTG'))
+            # temp.append(content.count('HHTTG'))
             if content.count('HHTTG') > 0:
                 temp.append(1)
             else:
                 temp.append(0)
-            #temp.append(content.count('USSERNM'))
+            # temp.append(content.count('USSERNM'))
             if content.count('USSERNM') > 0:
                 temp.append(1)
             else:
                 temp.append(0)
 
-            temp.append(sentiScore/twLen)
+            temp.append(sentiScore / twLen)
             temp.append(readScore)
-            temp.append(parseLength[index]/twLen)
-            temp.append(headCount[index]/twLen)
-            #temp.append(days[index])
-            #temp.append(time[index])
+            temp.append(parseLength[index] / twLen)
+            temp.append(headCount[index] / twLen)
+            # temp.append(days[index])
+            # temp.append(time[index])
             temp += POScounts[index]
-            #temp.append(content.count('!'))
+            # temp.append(content.count('!'))
             if content.count('!') > 0:
                 temp.append(1)
             else:
                 temp.append(0)
-            #temp.append(content.count('?'))
+            # temp.append(content.count('?'))
             if content.count('?') > 0:
                 temp.append(1)
             else:
@@ -239,7 +205,7 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
             if userCount == 0:
                 temp.append(0.0)
             else:
-                temp.append(mentionFollowers/userCount)
+                temp.append(mentionFollowers / userCount)
 
             semanticFeatures.append(numpy.array(temp))
             classes.append(labels[index])
@@ -276,11 +242,14 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
             print 'case ' + str(i)
             feature_train, feature_test, label_train, label_test = cross_validation.train_test_split(features, classes, test_size=0.2, random_state=0)
 
-            if trainMode == 'MLP':
-                #this requires scikit-learn 0.18
-                model = MLPClassifier(algorithm='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
+            if trainMode == 'MaxEnt':
+                # this requires scikit-learn 0.18
+                # model = MLPClassifier(algorithm='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
+                model = LogisticRegression()
             elif trainMode == 'RF':
                 model = ExtraTreesClassifier(n_estimators=50, random_state=0)
+            elif trainMode == 'Ada':
+                model = AdaBoostClassifier()
             else:
                 model = svm.SVC()
 
@@ -307,7 +276,7 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
 
             auc = roc_auc_score(label_test, predictions)
             aucSum += auc
-            #print confusion_matrix(label_test, predictions)
+            # print confusion_matrix(label_test, predictions)
 
             precisionSum += precision
             recallSum += recall
@@ -326,7 +295,7 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
         print outputRecall
         print outputAccuracy
         print outputF1
-        print aucSum/5
+        print aucSum / 5
         print ''
         resultFile.write(str(outputPrecision) + '\n')
         resultFile.write(str(outputRecall) + '\n')
@@ -338,16 +307,16 @@ def run(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='r
     resultFile.close()
 
 
-def runModel():
+if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
     outputFilename = 'results/temp.result'
 
-    run(1, 'totalGroup', 0, 0, 'MLP', outputFile=outputFilename)
-    run(1, 'totalGroup', 2, 1, 'MLP', outputFile=outputFilename)
-    run(1, 'totalGroup', 0, 0, 'RF', outputFile=outputFilename)
-    run(1, 'totalGroup', 0, 0, 'SVM', outputFile=outputFilename)
-    run(1, 'totalGroup', 2, 4, 'SVM', outputFile=outputFilename)
+    runModel(1, 'totalGroup', 0, 0, 'MLP', outputFile=outputFilename)
+    runModel(1, 'totalGroup', 2, 1, 'MLP', outputFile=outputFilename)
+    runModel(1, 'totalGroup', 0, 0, 'RF', outputFile=outputFilename)
+    runModel(1, 'totalGroup', 0, 0, 'SVM', outputFile=outputFilename)
+    runModel(1, 'totalGroup', 2, 4, 'SVM', outputFile=outputFilename)
 
     '''
     #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)

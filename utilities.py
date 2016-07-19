@@ -1,7 +1,46 @@
 __author__ = 'renhao.cui'
 import re
 import numpy as np
+import json
 
+
+def POSRatio(inputList):
+    out = []
+    temp = []
+    for item in inputList:
+        temp.append(float(item))
+    if sum(temp) == 0:
+        out = [0.0, 0.0, 0.0]
+    else:
+        for item in temp:
+            out.append(item/sum(temp))
+    return out
+
+
+def hourMapper(hour):
+    input = int(hour)
+    if 0 <= input < 6:
+        output = 0
+    elif 6 <= input < 12:
+        output = 1
+    elif 12 <= input < 18:
+        output = 2
+    else:
+        output = 3
+    return output
+
+def mapMention(inputFile):
+    mentionFile = open(inputFile, 'r')
+    outputMapper = {}
+    for line in mentionFile:
+        mention = json.loads(line.strip())
+        if mention['verified'] == 'true':
+            verify = 1
+        else:
+            verify = 0
+        outputMapper[mention['screen_name']] = (verify, mention['followers_count'])
+    mentionFile.close()
+    return outputMapper
 
 def vectorizeWord(content, corpus):
     vector = {}

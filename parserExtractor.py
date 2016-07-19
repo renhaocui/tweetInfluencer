@@ -29,16 +29,16 @@ def outputHeads(input):
 
 
 def extractor():
-    posInputFile = open('adData/analysis/ranked/Parser/total.posContent.predict', 'r')
-    negInputFile = open('adData/analysis/ranked/Parser/total.negContent.predict', 'r')
-    posFile = open('adData/analysis/ranked/1/total.pos', 'r')
-    negFile = open('adData/analysis/ranked/2/total.neg', 'r')
-    posLengthFile = open('adData/analysis/ranked/Parser/parserLength.pos', 'w')
-    negLengthFile = open('adData/analysis/ranked/Parser/parserLength.neg', 'w')
-    posHeadCountFile = open('adData/analysis/ranked/Parser/parserHeadCount.pos', 'w')
-    negHeadCountFile = open('adData/analysis/ranked/Parser/parserHeadCount.neg', 'w')
-    posPOSCountFile = open('adData/analysis/ranked/Parser/parserPOSCount.pos', 'w')
-    negPOSCountFile = open('adData/analysis/ranked/Parser/parserPOSCount.neg', 'w')
+    posInputFile = open('dataset/experiment/Parser/total.posContent.predict', 'r')
+    negInputFile = open('adData/experiment/Parser/total.negContent.predict', 'r')
+    posFile = open('dataset/experiment/ranked/total.pos', 'r')
+    negFile = open('dataset/experiment/ranked/total.neg', 'r')
+    posLengthFile = open('dataset/experiment/Parser/parserLength.pos', 'w')
+    negLengthFile = open('dataset/experiment/Parser/parserLength.neg', 'w')
+    posHeadCountFile = open('dataset/experiment/Parser/parserHeadCount.pos', 'w')
+    negHeadCountFile = open('dataset/experiment/Parser/parserHeadCount.neg', 'w')
+    posPOSCountFile = open('dataset/experiment/Parser/parserPOSCount.pos', 'w')
+    negPOSCountFile = open('dataset/experiment/Parser/parserPOSCount.neg', 'w')
 
     tempData = {}
     tempOutput = {}
@@ -69,7 +69,7 @@ def extractor():
             longLen = longestLength(tempData)
             posLengthFile.write(str(longLen) + ' :: ' + posData[index] + '\n')
             posHeadCountFile.write(str(len(outputHeads(tempOutput).split())) + ' :: ' + posData[index] + '\n')
-            posPOSCountFile.write(str(posCount['N'])+' '+str(posCount['V'])+' '+str(posCount['A']) + ' :: ' + posData[index] + '\n')
+            posPOSCountFile.write(str(posCount['N']) + ' ' + str(posCount['V']) + ' ' + str(posCount['A']) + ' :: ' + posData[index] + '\n')
             tempData = {}
             tempOutput = {}
             posCount = {'N': 0, 'V': 0, 'A': 0}
@@ -94,7 +94,7 @@ def extractor():
             longLen = longestLength(tempData)
             negLengthFile.write(str(longLen) + ' :: ' + negData[index] + '\n')
             negHeadCountFile.write(str(len(outputHeads(tempOutput).split())) + ' :: ' + negData[index] + '\n')
-            negPOSCountFile.write(str(posCount['N'])+' '+str(posCount['V'])+' '+str(posCount['A']) + ' :: ' + negData[index] + '\n')
+            negPOSCountFile.write(str(posCount['N']) + ' ' + str(posCount['V']) + ' ' + str(posCount['A']) + ' :: ' + negData[index] + '\n')
             negLength.append(longLen)
             tempData = {}
             tempOutput = {}
@@ -107,4 +107,3 @@ def extractor():
     negLengthFile.close()
     posHeadCountFile.close()
     negHeadCountFile.close()
-

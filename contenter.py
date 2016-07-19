@@ -21,11 +21,11 @@ def contenter(indexList):
         outputFile1.close()
         outputFile2.close()
 
-def contenter2():
-    totalRankedFile1 = open('adData/analysis/ranked/1/total.pos', 'r')
-    totalRankedFile2 = open('adData/analysis/ranked/2/total.neg', 'r')
-    outputFile1 = open('adData/analysis/ranked/content/total.posContent', 'w')
-    outputFile2 = open('adData/analysis/ranked/content/total.negContent', 'w')
+def contenterExtractor():
+    totalRankedFile1 = open('dataset/experiment/ranked/total.pos', 'r')
+    totalRankedFile2 = open('dataset/experiment/ranked/total.neg', 'r')
+    outputFile1 = open('dataset/experiment/content/total.posContent', 'w')
+    outputFile2 = open('dataset/experiment/content/total.negContent', 'w')
 
     for line in totalRankedFile1:
         data = line.strip().split(' :: ')

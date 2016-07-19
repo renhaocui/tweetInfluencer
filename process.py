@@ -1,20 +1,20 @@
 __author__ = 'rencui'
 import tweetBlender
-import outlierLocator
+import dataLabeler
 import contenter
 import parserExtractor
 import tweetGrouper
-import basicModel
+import runModel
 
 # blender the brand dataset
 tweetBlender.blend(300, 0)
 # remove outliers and assign labels
-outlierLocator.outlierExtractor()
+dataLabeler.outlierExtractor()
 # extract content and parse
-contenter.contenter2()
+contenter.contenterExtractor()
 # need to run TweeboParser here
 parserExtractor.extractor()
 # grouping the data
 tweetGrouper.runGrouper()
 # run the experiment
-basicModel.runModel()
+runModel(1, 'totalGroup', 2, 4, 'SVM', outputFile='results/temp.result')

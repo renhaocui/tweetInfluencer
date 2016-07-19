@@ -1,6 +1,7 @@
 __author__ = 'rencui'
 import json
 
+
 def blend(fileSize, offset):
     print 'blending tweets...'
     brandList = []
@@ -9,23 +10,23 @@ def blend(fileSize, offset):
         brandList.append(line.strip())
     listFile.close()
 
-    combinedOutFile = open('adData/ConsolidatedTweets/total.json', 'w')
+    combinedOutFile = open('dataset/ConsolidatedTweets/total.json', 'w')
     totalIndex = 0
     for brand in brandList:
+        outputFile = open('dataset/ConsolidatedTweets/' + brand + '.json', 'w')
+        finalOutputFile = open('dataset/ConsolidatedTweets/total.final', 'w')
         tweetIDSet = set()
         tweetData = {}
+        finalTweetData = {}
         for index in range(fileSize):
-            inputFile = open("C:/Users/renhao.cui/Desktop/ad data/" + brand + '/' + str(index+offset)+'.json', 'r')
+            inputFile = open("C:/Users/renhao.cui/Desktop/ad data/" + brand + '/' + str(index + offset) + '.json', 'r')
             for line in inputFile:
                 data = json.loads(line.strip())
-                id = data['id']
-                if id not in tweetIDSet:
+                tweetID = data['id']
+                if tweetID not in tweetIDSet:
                     totalIndex += 1
-                    tweetIDSet.add(id)
-                    temp = {}
-                    temp['id'] = id
-                    temp['text'] = data['text']
-                    temp['create_at'] = data['created_at']
+                    tweetIDSet.add(tweetID)
+                    temp = {'id': tweetID, 'text': data['text'], 'create_at': data['created_at']}
                     hashtags = []
                     if 'hashtags' in data['entities']:
                         for tag in data['entities']['hashtags']:
@@ -48,35 +49,34 @@ def blend(fileSize, offset):
                     temp['media'] = media
                     temp['source'] = data['source']
                     tempList = []
-                    subTemp = {}
-                    subTemp['index'] = 0
-                    subTemp['favorite_count'] = data['favorite_count']
-                    subTemp['retweet_count'] = data['retweet_count']
-                    subTemp['user_favorite_count'] = data['user']['favourites_count']
-                    subTemp['user_followers_count'] = data['user']['followers_count']
-                    subTemp['user_friends_count'] = data['user']['friends_count']
-                    subTemp['user_statuses_count'] = data['user']['statuses_count']
-                    subTemp['user_listed_count'] = data['user']['listed_count']
+                    subTemp = {'index': 0, 'favorite_count': data['favorite_count'], 'retweet_count': data['retweet_count'],
+                               'user_favorite_count': data['user']['favourites_count'], 'user_followers_count': data['user']['followers_count'],
+                               'user_friends_count': data['user']['friends_count'], 'user_statuses_count': data['user']['statuses_count'],
+                               'user_listed_count': data['user']['listed_count']}
                     tempList.append(subTemp)
                     temp['dynamic'] = tempList
                     temp['brand'] = brand
-                    tweetData[id] = temp
+                    tweetData[tweetID] = temp
+                    finalTweetData[tweetID] = temp
                 else:
-                    subTemp = {}
-                    subTemp['index'] = len(tweetData[id]['dynamic'])
-                    subTemp['favorite_count'] = data['favorite_count']
-                    subTemp['retweet_count'] = data['retweet_count']
-                    subTemp['user_favorite_count'] = data['user']['favourites_count']
-                    subTemp['user_followers_count'] = data['user']['followers_count']
-                    subTemp['user_friends_count'] = data['user']['friends_count']
-                    subTemp['user_statuses_count'] = data['user']['statuses_count']
-                    subTemp['user_listed_count'] = data['user']['listed_count']
-                    tweetData[id]['dynamic'].append(subTemp)
+                    subTemp = {'index': len(tweetData[tweetID]['dynamic']), 'favorite_count': data['favorite_count'], 'retweet_count': data['retweet_count'],
+                               'user_favorite_count': data['user']['favourites_count'], 'user_followers_count': data['user']['followers_count'],
+                               'user_friends_count': data['user']['friends_count'], 'user_statuses_count': data['user']['statuses_count'],
+                               'user_listed_count': data['user']['listed_count']}
+                    finalTweetData[tweetID]['dynamic'][0] = subTemp
+                    tweetData[tweetID]['dynamic'].append(subTemp)
             inputFile.close()
-        outputFile = open('adData/ConsolidatedTweets/'+brand+'.json', 'w')
-        print brand+': '+str(totalIndex)
-        for (id, tweet) in tweetData.items():
-            outputFile.write(json.dumps(tweet)+'\n')
-            combinedOutFile.write(json.dumps(tweet)+'\n')
+
+        print brand + ': ' + str(totalIndex)
+        for (tweetID, tweet) in tweetData.items():
+            outputFile.write(json.dumps(tweet) + '\n')
+            combinedOutFile.write(json.dumps(tweet) + '\n')
         outputFile.close()
+        for (tweetID, tweet) in finalTweetData.items():
+            finalOutputFile.write(json.dumps(tweet) + '\n')
+        finalOutputFile.close()
     combinedOutFile.close()
+
+
+if __name__ == "__main__":
+    blend(610, 0)
