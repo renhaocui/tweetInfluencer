@@ -50,8 +50,8 @@ def outlierExtractor():
             if tweetID not in exceptionList:
                 text = data['text'].encode('utf-8').lower()
                 content = tweetTextCleaner.tweetCleaner(text)
-                finalIndex = 0
-                #finalIndex = len(data['dynamic'])-1
+                #finalIndex = 0
+                finalIndex = len(data['dynamic'])-1
                 followers = float(data['dynamic'][finalIndex]['user_followers_count'])
                 retweet = float(data['dynamic'][finalIndex]['retweet_count'])
                 favorite = float(data['dynamic'][finalIndex]['favorite_count'])

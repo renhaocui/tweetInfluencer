@@ -17,4 +17,4 @@ parserExtractor.extractor()
 # grouping the data
 tweetGrouper.runGrouper()
 # run the experiment
-runModel(1, 'totalGroup', 2, 4, 'SVM', outputFile='results/temp.result')
+runModel.runModel(1, 'totalGroup', 2, 4, 'SVM', outputFile='results/temp.result')

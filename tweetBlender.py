@@ -79,4 +79,4 @@ def blend(fileSize, offset):
 
 
 if __name__ == "__main__":
-    blend(610, 0)
+    blend(606, 0)

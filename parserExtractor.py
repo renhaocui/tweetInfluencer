@@ -29,16 +29,16 @@ def outputHeads(input):
 
 
 def extractor():
-    posInputFile = open('dataset/experiment/Parser/total.posContent.predict', 'r')
-    negInputFile = open('adData/experiment/Parser/total.negContent.predict', 'r')
+    posInputFile = open('dataset/experiment/parser/total.posContent.predict', 'r')
+    negInputFile = open('adData/experiment/parser/total.negContent.predict', 'r')
     posFile = open('dataset/experiment/ranked/total.pos', 'r')
     negFile = open('dataset/experiment/ranked/total.neg', 'r')
-    posLengthFile = open('dataset/experiment/Parser/parserLength.pos', 'w')
-    negLengthFile = open('dataset/experiment/Parser/parserLength.neg', 'w')
-    posHeadCountFile = open('dataset/experiment/Parser/parserHeadCount.pos', 'w')
-    negHeadCountFile = open('dataset/experiment/Parser/parserHeadCount.neg', 'w')
-    posPOSCountFile = open('dataset/experiment/Parser/parserPOSCount.pos', 'w')
-    negPOSCountFile = open('dataset/experiment/Parser/parserPOSCount.neg', 'w')
+    posLengthFile = open('dataset/experiment/parser/parserLength.pos', 'w')
+    negLengthFile = open('dataset/experiment/parser/parserLength.neg', 'w')
+    posHeadCountFile = open('dataset/experiment/parser/parserHeadCount.pos', 'w')
+    negHeadCountFile = open('dataset/experiment/parser/parserHeadCount.neg', 'w')
+    posPOSCountFile = open('dataset/experiment/parser/parserPOSCount.pos', 'w')
+    negPOSCountFile = open('dataset/experiment/parser/parserPOSCount.neg', 'w')
 
     tempData = {}
     tempOutput = {}
