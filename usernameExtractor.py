@@ -19,8 +19,8 @@ def oauth_login():
     twitter_api = twitter.Twitter(auth=auth)
     return twitter_api
 
-userFile = open('adData/analysis/ranked/mention.list', 'r')
-outputFile = open('adData/analysis/ranked/mention.json', 'w')
+userFile = open('dataset/experiment/mention.list', 'r')
+outputFile = open('dataset/experiment/mention.json', 'w')
 
 c_k = 'R2FZHZcAcHFatakYhKL2cQcVo'
 c_s = 'jwkcIPCkrOBdxKVTVVE7d7cIwH8ZyHHtqxYeCVUZs35Lu4BOkY'

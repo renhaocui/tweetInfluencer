@@ -3,6 +3,10 @@ from scipy import stats
 import json
 import statistics as stat
 import tweetTextCleaner
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 def outlierExtractor():
     print 'extracting outliers...'
@@ -34,18 +38,28 @@ def outlierExtractor():
 
     mentionList = set()
     hashtagList = set()
+
+    totalBrandData = {}
+    inputFile = open('dataset/ConsolidatedTweets/total.json', 'r')
+    for line in inputFile:
+        temp = json.loads(line.strip())
+        brand = temp['brand']
+        if brand not in totalBrandData:
+            totalBrandData[brand] = [temp]
+        else:
+            totalBrandData[brand].append(temp)
+    inputFile.close()
+
     for brand in brandList:
         print brand
-        input = open('dataset/ConsolidatedTweets/'+brand+'.final', 'r')
-        outputFile = open('dataset/data/'+brand+'.data', 'w')
+        outputFile = open('dataset/brands/'+brand+'.data', 'w')
         outLierFile = open('dataset/exceptions/'+brand+'.outliers', 'w')
         #rankedFile1 = open('adData/analysis/ranked/1/'+brand+'.pos', 'w')
         #rankedFile2 = open('adData/analysis/ranked/2/'+brand+'.neg', 'w')
         brandData = []
         brandScoreList = []
 
-        for line in input:
-            data = json.loads(line.strip())
+        for data in totalBrandData[brand]:
             tweetID = long(data['id'])
             if tweetID not in exceptionList:
                 text = data['text'].encode('utf-8').lower()
@@ -68,13 +82,12 @@ def outlierExtractor():
             else:
                 text = data['text'].encode('utf-8')
                 expFile.write(str(tweetID)+'\t'+text+'\n')
-        input.close()
 
         zScores = stats.zscore(brandScoreList)
         if len(zScores) != len(brandData):
             print 'Z-score Error!'
-        maxScore = max(brandScoreList)
-        minScore = min(brandScoreList)
+        # maxScore = max(brandScoreList)
+        # minScore = min(brandScoreList)
         '''
         for score in brandScoreList:
             out += str((score - minScore)/(maxScore - minScore)) + '\t'
@@ -121,10 +134,16 @@ def outlierExtractor():
                     mentionsOutput = 'NONE'
                 else:
                     mentionsOutput = mentionsOutput[:-1]
-                totalPosFile.write(str(score)+' :: '+day+' :: '+hour+' :: '+unicode(content, errors='ignore')+' :: '+brand+' :: '+str(tweetID)+' :: '+hashtagOutput+' :: '+mentionsOutput+'\n')
+                try:
+                    totalPosFile.write(str(score)+' :: '+day+' :: '+hour+' :: '+unicode(content, errors='ignore')+' :: '+brand+' :: '+str(tweetID)+' :: '+hashtagOutput+' :: '+mentionsOutput+'\n')
+                except:
+                    print content
             else:
                 #rankedFile2.write(str(score)+' : '+day+' : '+hour+' : '+unicode(content, errors='ignore')+'\n')
-                totalNegFile.write(str(score)+' :: '+day+' :: '+hour+' :: '+unicode(content, errors='ignore')+' :: '+brand+' :: '+str(tweetID)+' :: '+hashtagOutput+' :: '+mentionsOutput+'\n')
+                try:
+                    totalNegFile.write(str(score)+' :: '+day+' :: '+hour+' :: '+unicode(content, errors='ignore')+' :: '+brand+' :: '+str(tweetID)+' :: '+hashtagOutput+' :: '+mentionsOutput+'\n')
+                except:
+                    print content
 
         maxScore = max(cleanScore)
         minScore = min(cleanScore)
@@ -142,14 +161,14 @@ def outlierExtractor():
             print 'TRUE'
         else:
             print 'FALSE'
-        print '\n'
+        print ''
         outLierFile.close()
         outputFile.close()
         #rankedFile1.close()
         #rankedFile2.close()
 
-    hashtagFile = open('adData/analysis/dataset/ranked/hashtag.list', 'w')
-    mentionFile = open('adData/analysis/dataset/ranked/mention.list', 'w')
+    hashtagFile = open('dataset/experiment/hashtag.list', 'w')
+    mentionFile = open('dataset/experiment/mention.list', 'w')
     for ht in hashtagList:
         hashtagFile.write(ht+'\n')
     for ment in mentionList:

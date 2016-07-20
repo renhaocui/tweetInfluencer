@@ -41,4 +41,6 @@ def contenterExtractor():
     outputFile2.close()
 
 
-#contenter([0,1,2,3,4, 'Total'])
+
+if __name__ == "__main__":
+    contenterExtractor()
