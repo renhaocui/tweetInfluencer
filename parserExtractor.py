@@ -107,3 +107,7 @@ def extractor():
     negLengthFile.close()
     posHeadCountFile.close()
     negHeadCountFile.close()
+
+
+if __name__ == 'main':
+    extractor()

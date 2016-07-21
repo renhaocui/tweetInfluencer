@@ -27,7 +27,6 @@ def removeUsername(input, token):
     if len(users) != 0:
         for user in users:
             input = input.replace(user, token)
-            input = input.replace('@', '')
     return input
 
 def tokenizeLinks(input, token):
@@ -42,16 +41,15 @@ def removeHashtag(input, token):
     if len(hts) != 0:
         for ht in hts:
             input = input.replace(ht, token)
-            input = input.replace('#', '')
     return input
 
 def tweetCleaner(input):
     input = input.replace('w/', 'with')
     input = input.replace('w/o', 'without')
-    input = removeUsername(input, '@USSERNM')
-    input = removeHashtag(input, '#HHTTG')
+    input = removeUsername(input, 'URNM')
+    input = removeHashtag(input, 'HTG')
     input = removeEmoji(input, 'EMMOJ')
-    input = tokenizeLinks(input, 'http://URRL')
+    input = tokenizeLinks(input, 'http://URL')
     for char in charList:
         input = input.replace(char, '')
     input = input.replace('\\"', '"')
