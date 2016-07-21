@@ -29,8 +29,8 @@ def outputHeads(input):
 
 
 def extractor():
-    posInputFile = open('dataset/experiment/parser/total.posContent.predict', 'r')
-    negInputFile = open('adData/experiment/parser/total.negContent.predict', 'r')
+    posInputFile = open('dataset/experiment/content/total.posContent.predict', 'r')
+    negInputFile = open('dataset/experiment/content/total.negContent.predict', 'r')
     posFile = open('dataset/experiment/ranked/total.pos', 'r')
     negFile = open('dataset/experiment/ranked/total.neg', 'r')
     posLengthFile = open('dataset/experiment/parser/parserLength.pos', 'w')
@@ -109,5 +109,5 @@ def extractor():
     negHeadCountFile.close()
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     extractor()

@@ -10,8 +10,8 @@ __author__ = 'rencui'
 def analysisByDay():
     posDayCount = {}
     negDayCount = {}
-    posFile = open('adData/analysis/ranked/1/total.pos', 'r')
-    negFile = open('adData/analysis/ranked/2/total.neg', 'r')
+    posFile = open('dataset/experiment/ranked/total.pos', 'r')
+    negFile = open('dataset/experiment/ranked/total.neg', 'r')
     for line in posFile:
         data = line.strip().split(' : ')
         day = data[1]
@@ -64,14 +64,14 @@ def brandGrouper(groupTitle, groupSize):
             groupMapper[brand] = index
     groupFile.close()
 
-    posInputFile = open('adData/analysis/ranked/1/total.pos', 'r')
-    negInputFile = open('adData/analysis/ranked/2/total.neg', 'r')
-    posParseLengthFile = open('adData/analysis/ranked/Parser/parserLength.pos', 'r')
-    negParseLengthFile = open('adData/analysis/ranked/Parser/parserLength.neg', 'r')
-    posHeadCountFile = open('adData/analysis/ranked/Parser/parserHeadCount.pos', 'r')
-    negHeadCountFile = open('adData/analysis/ranked/Parser/parserHeadCount.neg', 'r')
-    posPOSCountFile = open('adData/analysis/ranked/Parser/parserPOSCount.pos', 'r')
-    negPOSCountFile = open('adData/analysis/ranked/Parser/parserPOSCount.neg', 'r')
+    posInputFile = open('dataset/experiment/ranked/total.pos', 'r')
+    negInputFile = open('dataset/experiment/ranked/total.neg', 'r')
+    posParseLengthFile = open('dataset/experiment/parser/parserLength.pos', 'r')
+    negParseLengthFile = open('dataset/experiment/parser/parserLength.neg', 'r')
+    posHeadCountFile = open('dataset/experiment/parser/parserHeadCount.pos', 'r')
+    negHeadCountFile = open('dataset/experiment/parser/parserHeadCount.neg', 'r')
+    posPOSCountFile = open('dataset/experiment/parser/parserPOSCount.pos', 'r')
+    negPOSCountFile = open('dataset/experiment/parser/parserPOSCount.neg', 'r')
 
     posOutputFileList = []
     negOutputFileList = []
@@ -83,26 +83,26 @@ def brandGrouper(groupTitle, groupSize):
     negPOSCountFileList = []
     countFileList = []
     for index in range(groupSize):
-        tempPosFile = open('adData/analysis/groups/' + groupTitle + '/group' + str(index) + '.pos', 'w')
-        tempNegFile = open('adData/analysis/groups/' + groupTitle + '/group' + str(index) + '.neg', 'w')
-        countFileList.append('adData/analysis/groups/' + groupTitle + '/group' + str(index) + '.pos')
-        countFileList.append('adData/analysis/groups/' + groupTitle + '/group' + str(index) + '.neg')
+        tempPosFile = open('dataset/experiment/groups/' + groupTitle + '/group_' + str(index) + '.pos', 'w')
+        tempNegFile = open('dataset/experiment/groups/' + groupTitle + '/group_' + str(index) + '.neg', 'w')
+        countFileList.append('dataset/experiment/groups/' + groupTitle + '/group_' + str(index) + '.pos')
+        countFileList.append('dataset/experiment/groups/' + groupTitle + '/group_' + str(index) + '.neg')
         posOutputFileList.append(tempPosFile)
         negOutputFileList.append(tempNegFile)
-        tempPosParseLengthFile = open('adData/analysis/groups/' + groupTitle + '/parserLength' + str(index) + '.pos',
+        tempPosParseLengthFile = open('dataset/experiment/groups/' + groupTitle + '/parserLength_' + str(index) + '.pos',
                                       'w')
-        tempNegParseLengthFile = open('adData/analysis/groups/' + groupTitle + '/parserLength' + str(index) + '.neg',
+        tempNegParseLengthFile = open('dataset/experiment/groups/' + groupTitle + '/parserLength_' + str(index) + '.neg',
                                       'w')
         posParseLengthFileList.append(tempPosParseLengthFile)
         negParseLengthFileList.append(tempNegParseLengthFile)
-        tempPosParseHeadFile = open('adData/analysis/groups/' + groupTitle + '/parserHeadCount' + str(index) + '.pos',
+        tempPosParseHeadFile = open('dataset/experiment/groups/' + groupTitle + '/parserHeadCount_' + str(index) + '.pos',
                                     'w')
-        tempNegParseHeadFile = open('adData/analysis/groups/' + groupTitle + '/parserHeadCount' + str(index) + '.neg',
+        tempNegParseHeadFile = open('dataset/experiment/groups/' + groupTitle + '/parserHeadCount_' + str(index) + '.neg',
                                     'w')
         posParseHeadFileList.append(tempPosParseHeadFile)
         negParseHeadFileList.append(tempNegParseHeadFile)
-        tempPosPOSCountFile = open('adData/analysis/groups/' + groupTitle + '/parserPOSCount' + str(index) + '.pos', 'w')
-        tempNegPOSCountFile = open('adData/analysis/groups/' + groupTitle + '/parserPOSCount' + str(index) + '.neg', 'w')
+        tempPosPOSCountFile = open('dataset/experiment/groups/' + groupTitle + '/parserPOSCount_' + str(index) + '.pos', 'w')
+        tempNegPOSCountFile = open('dataset/experiment/groups/' + groupTitle + '/parserPOSCount_' + str(index) + '.neg', 'w')
         posPOSCountFileList.append(tempPosPOSCountFile)
         negPOSCountFileList.append(tempNegPOSCountFile)
 
@@ -163,15 +163,15 @@ def brandGrouper(groupTitle, groupSize):
     negParseLengthFile.close()
     posHeadCountFile.close()
     negHeadCountFile.close()
-    print fileLineCount(countFileList)
+    print 'Brand Group sizes: '+str(fileLineCount(countFileList))
 
 
 def topicGrouper(groupSize):
     print 'topic grouping...'
     data = []
     # punctuations = set(string.punctuation)
-    posFile = open('adData/analysis/ranked/1/total.pos', 'r')
-    negFile = open('adData/analysis/ranked/2/total.neg', 'r')
+    posFile = open('dataset/experiment/ranked/total.pos', 'r')
+    negFile = open('dataset/experiment/ranked/total.neg', 'r')
     csvFile = open('LDA/LDAinput.csv', 'w')
     listFile = open('LDA/LDAinput.list', 'w')
     for line in posFile:
@@ -204,14 +204,14 @@ def topicGrouper(groupSize):
     for index, value in topicOut.items():
         topicMapper[data[index][1]] = value[0]
 
-    posInputFile = open('adData/analysis/ranked/1/total.pos', 'r')
-    negInputFile = open('adData/analysis/ranked/2/total.neg', 'r')
-    posParseLengthFile = open('adData/analysis/ranked/Parser/parserLength.pos', 'r')
-    negParseLengthFile = open('adData/analysis/ranked/Parser/parserLength.neg', 'r')
-    posHeadCountFile = open('adData/analysis/ranked/Parser/parserHeadCount.pos', 'r')
-    negHeadCountFile = open('adData/analysis/ranked/Parser/parserHeadCount.neg', 'r')
-    posPOSCountFile = open('adData/analysis/ranked/Parser/parserPOSCount.pos', 'r')
-    negPOSCountFile = open('adData/analysis/ranked/Parser/parserPOSCount.neg', 'r')
+    posInputFile = open('dataset/experiment/ranked/total.pos', 'r')
+    negInputFile = open('dataset/experiment/ranked/total.neg', 'r')
+    posParseLengthFile = open('dataset/experiment/parser/parserLength.pos', 'r')
+    negParseLengthFile = open('dataset/experiment/parser/parserLength.neg', 'r')
+    posHeadCountFile = open('dataset/experiment/parser/parserHeadCount.pos', 'r')
+    negHeadCountFile = open('dataset/experiment/parser/parserHeadCount.neg', 'r')
+    posPOSCountFile = open('dataset/experiment/parser/parserPOSCount.pos', 'r')
+    negPOSCountFile = open('dataset/experiment/parser/parserPOSCount.neg', 'r')
 
     posOutputFileList = []
     negOutputFileList = []
@@ -223,22 +223,22 @@ def topicGrouper(groupSize):
     negPOSCountFileList = []
     countFileList = []
     for index in range(groupSize):
-        tempPosFile = open('adData/analysis/groups/topicGroup/group' + str(index) + '.pos', 'w')
-        tempNegFile = open('adData/analysis/groups/topicGroup/group' + str(index) + '.neg', 'w')
-        countFileList.append('adData/analysis/groups/topicGroup/group' + str(index) + '.pos')
-        countFileList.append('adData/analysis/groups/topicGroup/group' + str(index) + '.neg')
+        tempPosFile = open('dataset/experiment/groups/topicGroup/group_' + str(index) + '.pos', 'w')
+        tempNegFile = open('dataset/experiment/groups/topicGroup/group_' + str(index) + '.neg', 'w')
+        countFileList.append('dataset/experiment/groups/topicGroup/group_' + str(index) + '.pos')
+        countFileList.append('dataset/experiment/groups/topicGroup/group_' + str(index) + '.neg')
         posOutputFileList.append(tempPosFile)
         negOutputFileList.append(tempNegFile)
-        tempPosParseLengthFile = open('adData/analysis/groups/topicGroup/parserLength' + str(index) + '.pos', 'w')
-        tempNegParseLengthFile = open('adData/analysis/groups/topicGroup/parserLength' + str(index) + '.neg', 'w')
+        tempPosParseLengthFile = open('dataset/experiment/groups/topicGroup/parserLength_' + str(index) + '.pos', 'w')
+        tempNegParseLengthFile = open('dataset/experiment/groups/topicGroup/parserLength_' + str(index) + '.neg', 'w')
         posParseLengthFileList.append(tempPosParseLengthFile)
         negParseLengthFileList.append(tempNegParseLengthFile)
-        tempPosParseHeadFile = open('adData/analysis/groups/topicGroup/parserHeadCount' + str(index) + '.pos', 'w')
-        tempNegParseHeadFile = open('adData/analysis/groups/topicGroup/parserHeadCount' + str(index) + '.neg', 'w')
+        tempPosParseHeadFile = open('dataset/experiment/groups/topicGroup/parserHeadCount_' + str(index) + '.pos', 'w')
+        tempNegParseHeadFile = open('dataset/experiment/groups/topicGroup/parserHeadCount_' + str(index) + '.neg', 'w')
         posParseHeadFileList.append(tempPosParseHeadFile)
         negParseHeadFileList.append(tempNegParseHeadFile)
-        tempPosPOSCountFile = open('adData/analysis/groups/topicGroup/parserPOSCount' + str(index) + '.pos', 'w')
-        tempNegPOSCountFile = open('adData/analysis/groups/topicGroup/parserPOSCount' + str(index) + '.neg', 'w')
+        tempPosPOSCountFile = open('dataset/experiment/groups/topicGroup/parserPOSCount_' + str(index) + '.pos', 'w')
+        tempNegPOSCountFile = open('dataset/experiment/groups/topicGroup/parserPOSCount_' + str(index) + '.neg', 'w')
         posPOSCountFileList.append(tempPosPOSCountFile)
         negPOSCountFileList.append(tempNegPOSCountFile)
 
@@ -300,7 +300,7 @@ def topicGrouper(groupSize):
     negHeadCountFile.close()
     posPOSCountFile.close()
     negPOSCountFile.close()
-    print fileLineCount(countFileList)
+    print 'Topic Group size: '+str(fileLineCount(countFileList))
 
 
 def similarityGrouper(groupSize):
@@ -308,8 +308,8 @@ def similarityGrouper(groupSize):
     tweets = []
     ids = []
     idMapper = {}
-    posInputFile = open('adData/analysis/ranked/1/total.pos', 'r')
-    negInputFile = open('adData/analysis/ranked/2/total.neg', 'r')
+    posInputFile = open('dataset/experiment/ranked/total.pos', 'r')
+    negInputFile = open('dataset/experiment/ranked/total.neg', 'r')
 
     for line in posInputFile:
         items = line.strip().split(' :: ')
@@ -333,14 +333,14 @@ def similarityGrouper(groupSize):
     for index, label in enumerate(kmeans.labels_):
         idMapper[ids[index]] = label
 
-    posInputFile = open('adData/analysis/ranked/1/total.pos', 'r')
-    negInputFile = open('adData/analysis/ranked/2/total.neg', 'r')
-    posParseLengthFile = open('adData/analysis/ranked/Parser/parserLength.pos', 'r')
-    negParseLengthFile = open('adData/analysis/ranked/Parser/parserLength.neg', 'r')
-    posHeadCountFile = open('adData/analysis/ranked/Parser/parserHeadCount.pos', 'r')
-    negHeadCountFile = open('adData/analysis/ranked/Parser/parserHeadCount.neg', 'r')
-    posPOSCountFile = open('adData/analysis/ranked/Parser/parserPOSCount.pos', 'r')
-    negPOSCountFile = open('adData/analysis/ranked/Parser/parserPOSCount.neg', 'r')
+    posInputFile = open('dataset/experiment/ranked/total.pos', 'r')
+    negInputFile = open('dataset/experiment/ranked/total.neg', 'r')
+    posParseLengthFile = open('dataset/experiment/parser/parserLength.pos', 'r')
+    negParseLengthFile = open('dataset/experiment/parser/parserLength.neg', 'r')
+    posHeadCountFile = open('dataset/experiment/parser/parserHeadCount.pos', 'r')
+    negHeadCountFile = open('dataset/experiment/parser/parserHeadCount.neg', 'r')
+    posPOSCountFile = open('dataset/experiment/parser/parserPOSCount.pos', 'r')
+    negPOSCountFile = open('dataset/experiment/parser/parserPOSCount.neg', 'r')
 
     posOutputFileList = []
     negOutputFileList = []
@@ -355,22 +355,22 @@ def similarityGrouper(groupSize):
     negDetailData = {}
     countFileList = []
     for index in range(groupSize):
-        tempPosFile = open('adData/analysis/groups/simGroup/group' + str(index) + '.pos', 'w')
-        tempNegFile = open('adData/analysis/groups/simGroup/group' + str(index) + '.neg', 'w')
-        countFileList.append('adData/analysis/groups/simGroup/group' + str(index) + '.pos')
-        countFileList.append('adData/analysis/groups/simGroup/group' + str(index) + '.neg')
+        tempPosFile = open('dataset/experiment/groups/simGroup/group_' + str(index) + '.pos', 'w')
+        tempNegFile = open('dataset/experiment/groups/simGroup/group_' + str(index) + '.neg', 'w')
+        countFileList.append('dataset/experiment/groups/simGroup/group_' + str(index) + '.pos')
+        countFileList.append('dataset/experiment/groups/simGroup/group_' + str(index) + '.neg')
         posOutputFileList.append(tempPosFile)
         negOutputFileList.append(tempNegFile)
-        tempPosParseLengthFile = open('adData/analysis/groups/simGroup/parserLength' + str(index) + '.pos', 'w')
-        tempNegParseLengthFile = open('adData/analysis/groups/simGroup/parserLength' + str(index) + '.neg', 'w')
+        tempPosParseLengthFile = open('dataset/experiment/groups/simGroup/parserLength_' + str(index) + '.pos', 'w')
+        tempNegParseLengthFile = open('dataset/experiment/groups/simGroup/parserLength_' + str(index) + '.neg', 'w')
         posParseLengthFileList.append(tempPosParseLengthFile)
         negParseLengthFileList.append(tempNegParseLengthFile)
-        tempPosParseHeadFile = open('adData/analysis/groups/simGroup/parserHeadCount' + str(index) + '.pos', 'w')
-        tempNegParseHeadFile = open('adData/analysis/groups/simGroup/parserHeadCount' + str(index) + '.neg', 'w')
+        tempPosParseHeadFile = open('dataset/experiment/groups/simGroup/parserHeadCount_' + str(index) + '.pos', 'w')
+        tempNegParseHeadFile = open('dataset/experiment/groups/simGroup/parserHeadCount_' + str(index) + '.neg', 'w')
         posParseHeadFileList.append(tempPosParseHeadFile)
         negParseHeadFileList.append(tempNegParseHeadFile)
-        tempPosPOSCountFile = open('adData/analysis/groups/simGroup/parserPOSCount' + str(index) + '.pos', 'w')
-        tempNegPOSCountFile = open('adData/analysis/groups/simGroup/parserPOSCount' + str(index) + '.neg', 'w')
+        tempPosPOSCountFile = open('dataset/experiment/groups/simGroup/parserPOSCount_' + str(index) + '.pos', 'w')
+        tempNegPOSCountFile = open('dataset/experiment/groups/simGroup/parserPOSCount_' + str(index) + '.neg', 'w')
         posPOSCountFileList.append(tempPosPOSCountFile)
         negPOSCountFileList.append(tempNegPOSCountFile)
 
@@ -437,7 +437,7 @@ def similarityGrouper(groupSize):
     negHeadCountFile.close()
     posPOSCountFile.close()
     negPOSCountFile.close()
-    print fileLineCount(countFileList)
+    print 'Similarity Group sizes: '+str(fileLineCount(countFileList))
 
     '''
     posDetailFile = open('adData/analysis/groups/simGroup/details.pos', 'w')
@@ -452,22 +452,22 @@ def similarityGrouper(groupSize):
 
 
 def totalGrouper():
-    shutil.copy2('adData/analysis/ranked/1/total.pos', 'adData/analysis/groups/totalGroup/group0.pos')
-    shutil.copy2('adData/analysis/ranked/2/total.neg', 'adData/analysis/groups/totalGroup/group0.neg')
-    shutil.copy2('adData/analysis/ranked/Parser/parserHeadCount.pos', 'adData/analysis/groups/totalGroup/parserHeadCount0.pos')
-    shutil.copy2('adData/analysis/ranked/Parser/parserHeadCount.neg', 'adData/analysis/groups/totalGroup/parserHeadCount0.neg')
-    shutil.copy2('adData/analysis/ranked/Parser/parserLength.pos', 'adData/analysis/groups/totalGroup/parserLength0.pos')
-    shutil.copy2('adData/analysis/ranked/Parser/parserLength.neg', 'adData/analysis/groups/totalGroup/parserLength0.neg')
-    shutil.copy2('adData/analysis/ranked/Parser/parserPOSCount.pos', 'adData/analysis/groups/totalGroup/parserPOSCount0.pos')
-    shutil.copy2('adData/analysis/ranked/Parser/parserPOSCount.neg', 'adData/analysis/groups/totalGroup/parserPOSCount0.neg')
-    print fileLineCount(['adData/analysis/groups/totalGroup/group0.pos', 'adData/analysis/groups/totalGroup/group0.neg'])
+    shutil.copy2('dataset/experiment/ranked/total.pos', 'dataset/experiment/groups/totalGroup/group_0.pos')
+    shutil.copy2('dataset/experiment/ranked/total.neg', 'dataset/experiment/groups/totalGroup/group_0.neg')
+    shutil.copy2('dataset/experiment/parser/parserHeadCount.pos', 'dataset/experiment/groups/totalGroup/parserHeadCount_0.pos')
+    shutil.copy2('dataset/experiment/parser/parserHeadCount.neg', 'dataset/experiment/groups/totalGroup/parserHeadCount_0.neg')
+    shutil.copy2('dataset/experiment/parser/parserLength.pos', 'dataset/experiment/groups/totalGroup/parserLength_0.pos')
+    shutil.copy2('dataset/experiment/parser/parserLength.neg', 'dataset/experiment/groups/totalGroup/parserLength_0.neg')
+    shutil.copy2('dataset/experiment/parser/parserPOSCount.pos', 'dataset/experiment/groups/totalGroup/parserPOSCount_0.pos')
+    shutil.copy2('dataset/experiment/parser/parserPOSCount.neg', 'dataset/experiment/groups/totalGroup/parserPOSCount_0.neg')
+    print 'Total Group size: '+str(fileLineCount(['dataset/experiment/groups/totalGroup/group_0.pos', 'dataset/experiment/groups/totalGroup/group_0.neg']))
 
 def similarityGrouper2(groupSize):
     tweets = []
     ids = []
     idMapper = {}
-    posInputFile = open('adData/analysis/groups/simGroup2/group2.pos', 'r')
-    negInputFile = open('adData/analysis/groups/simGroup2/group2.neg', 'r')
+    posInputFile = open('dataset/experiment/groups/simGroup2/group2.pos', 'r')
+    negInputFile = open('dataset/experiment/groups/simGroup2/group2.neg', 'r')
 
     for line in posInputFile:
         items = line.strip().split(' :: ')
@@ -492,12 +492,12 @@ def similarityGrouper2(groupSize):
     for index, label in enumerate(kmeans.labels_):
         idMapper[ids[index]] = label
 
-    posInputFile = open('adData/analysis/groups/simGroup2/group2.pos', 'r')
-    negInputFile = open('adData/analysis/groups/simGroup2/group2.neg', 'r')
-    posParseLengthFile = open('adData/analysis/groups/simGroup2/parserLength2.pos', 'r')
-    negParseLengthFile = open('adData/analysis/groups/simGroup2/parserLength2.neg', 'r')
-    posHeadCountFile = open('adData/analysis/groups/simGroup2/parserHeadCount2.pos', 'r')
-    negHeadCountFile = open('adData/analysis/groups/simGroup2/parserHeadCount2.neg', 'r')
+    posInputFile = open('dataset/experiment/groups/simGroup2/group2.pos', 'r')
+    negInputFile = open('dataset/experiment/groups/simGroup2/group2.neg', 'r')
+    posParseLengthFile = open('dataset/experiment/groups/simGroup2/parserLength2.pos', 'r')
+    negParseLengthFile = open('dataset/experiment/groups/simGroup2/parserLength2.neg', 'r')
+    posHeadCountFile = open('dataset/experiment/groups/simGroup2/parserHeadCount2.pos', 'r')
+    negHeadCountFile = open('dataset/experiment/groups/simGroup2/parserHeadCount2.neg', 'r')
 
     posOutputFileList = []
     negOutputFileList = []
@@ -510,8 +510,8 @@ def similarityGrouper2(groupSize):
     negDetailData = {}
 
     for index in range(groupSize):
-        tempPosFile = open('adData/analysis/groups/simGroup3/group' + str(index) + '.pos', 'w')
-        tempNegFile = open('adData/analysis/groups/simGroup3/group' + str(index) + '.neg', 'w')
+        tempPosFile = open('dataset/experiment/groups/simGroup_3/group' + str(index) + '.pos', 'w')
+        tempNegFile = open('dataset/experiment/groups/simGroup_3/group' + str(index) + '.neg', 'w')
         posOutputFileList.append(tempPosFile)
         negOutputFileList.append(tempNegFile)
         tempPosParseLengthFile = open('adData/analysis/groups/simGroup3/parserLength' + str(index) + '.pos', 'w')
@@ -573,8 +573,8 @@ def similarityGrouper2(groupSize):
     posHeadCountFile.close()
     negHeadCountFile.close()
 
-    posDetailFile = open('adData/analysis/groups/simGroup3/details.pos', 'w')
-    negDetailFile = open('adData/analysis/groups/simGroup3/details.neg', 'w')
+    posDetailFile = open('dataset/experiment/groups/simGroup3/details.pos', 'w')
+    negDetailFile = open('dataset/experiment/groups/simGroup3/details.neg', 'w')
     for id, value in posDetailData.items():
         posDetailFile.write(id+'\t'+str(value[0])+'\t'+value[1]+'\t'+value[2]+'\t'+value[3]+'\t'+value[4]+'\t'+value[6]+'\t'+value[7]+'\n')
     for id, value in negDetailData.items():
@@ -582,9 +582,9 @@ def similarityGrouper2(groupSize):
     posDetailFile.close()
     negDetailFile.close()
 
-def runGrouper():
+if __name__ == '__main__':
     totalGrouper()
     brandGrouper('subBrandGroup', 3)
-    brandGrouper('brandGroup', 3)
+    #brandGrouper('brandGroup', 3)
     topicGrouper(5)
     similarityGrouper(5)

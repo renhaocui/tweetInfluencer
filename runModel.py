@@ -33,9 +33,10 @@ def stemContent(input):
 
 # vectorMode 1: tfidf, 2: binaryCount
 # featureMode 0: semantic only, 1: vector only, 2: both
-def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, outputFile='result.output'):
+def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
+    outputFile = 'results/'+groupTitle+'.result'
     resultFile = open(outputFile, 'a')
-    mentionMapper = utilities.mapMention('adData/analysis/ranked/mention.json')
+    mentionMapper = utilities.mapMention('dataset/experiment/mention.json')
 
     print groupTitle
     resultFile.write(groupTitle + '\n')

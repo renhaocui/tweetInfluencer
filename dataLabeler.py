@@ -80,7 +80,7 @@ def outlierExtractor():
                 brandData.append((content, labelScore, tweetID, day, hour, data['mentions'], data['hashtags']))
                 brandScoreList.append(labelScore)
             else:
-                text = data['text'].encode('utf-8')
+                text = data['text'].encode('utf-8').replace('\r', ' ').replace('\n', ' ')
                 expFile.write(str(tweetID)+'\t'+text+'\n')
 
         zScores = stats.zscore(brandScoreList)
