@@ -48,10 +48,10 @@ def removeHashtag(input, token):
 def tweetCleaner(input):
     input = input.replace('w/', 'with')
     input = input.replace('w/o', 'without')
-    input = removeUsername(input, 'USSERNM')
-    input = removeHashtag(input, 'HHTTG')
+    input = removeUsername(input, '@USSERNM')
+    input = removeHashtag(input, '#HHTTG')
     input = removeEmoji(input, 'EMMOJ')
-    input = tokenizeLinks(input, 'URRL')
+    input = tokenizeLinks(input, 'http://URRL')
     for char in charList:
         input = input.replace(char, '')
     input = input.replace('\\"', '"')
