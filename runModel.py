@@ -16,6 +16,11 @@ from sklearn.ensemble import ExtraTreesClassifier
 # from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_auc_score
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.naive_bayes import MultinomialNB
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 dayMapper = {'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6, 'Sun': 7}
 
@@ -26,7 +31,7 @@ def stemContent(input):
     words = simpleTokenize(input)
     out = ''
     for word in words:
-        temp = stemmer.stem(word)
+        temp = stemmer.stem(word.encode('utf-8').decode('utf-8'))
         out += temp + ' '
     return out.strip()
 
@@ -34,25 +39,26 @@ def stemContent(input):
 # vectorMode 1: tfidf, 2: binaryCount
 # featureMode 0: semantic only, 1: vector only, 2: both
 def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
-    outputFile = 'results/'+groupTitle+'.result'
+    outputFile = 'results/'+groupTitle+'_'+trainMode+'.result'
     resultFile = open(outputFile, 'a')
     mentionMapper = utilities.mapMention('dataset/experiment/mention.json')
 
     print groupTitle
+    print trainMode
     resultFile.write(groupTitle + '\n')
     for group in range(groupSize):
         print 'group: ' + str(group)
         resultFile.write('group: ' + str(group) + '\n')
         # happy_log_probs, sad_log_probs = utilities.readSentimentList('twitter_sentiment_list.csv')
         afinn = Afinn()
-        posFile = open('adData/analysis/groups/' + groupTitle + '/group' + str(group) + '.pos', 'r')
-        negFile = open('adData/analysis/groups/' + groupTitle + '/group' + str(group) + '.neg', 'r')
-        posParseLengthFile = open('adData/analysis/groups/' + groupTitle + '/parserLength' + str(group) + '.pos', 'r')
-        negParseLengthFile = open('adData/analysis/groups/' + groupTitle + '/parserLength' + str(group) + '.neg', 'r')
-        posHeadCountFile = open('adData/analysis/groups/' + groupTitle + '/parserHeadCount' + str(group) + '.pos', 'r')
-        negHeadCountFile = open('adData/analysis/groups/' + groupTitle + '/parserHeadCount' + str(group) + '.neg', 'r')
-        posPOSCountFile = open('adData/analysis/groups/' + groupTitle + '/parserPOSCount' + str(group) + '.pos', 'r')
-        negPOSCountFile = open('adData/analysis/groups/' + groupTitle + '/parserPOSCount' + str(group) + '.neg', 'r')
+        posFile = open('dataset/experiment/groups/' + groupTitle + '/group_' + str(group) + '.pos', 'r')
+        negFile = open('dataset/experiment/groups/' + groupTitle + '/group_' + str(group) + '.neg', 'r')
+        posParseLengthFile = open('dataset/experiment/groups/' + groupTitle + '/parserLength_' + str(group) + '.pos', 'r')
+        negParseLengthFile = open('dataset/experiment/groups/' + groupTitle + '/parserLength_' + str(group) + '.neg', 'r')
+        posHeadCountFile = open('dataset/experiment/groups/' + groupTitle + '/parserHeadCount_' + str(group) + '.pos', 'r')
+        negHeadCountFile = open('dataset/experiment/groups/' + groupTitle + '/parserHeadCount_' + str(group) + '.neg', 'r')
+        posPOSCountFile = open('dataset/experiment/groups/' + groupTitle + '/parserPOSCount_' + str(group) + '.pos', 'r')
+        negPOSCountFile = open('dataset/experiment/groups/' + groupTitle + '/parserPOSCount_' + str(group) + '.neg', 'r')
 
         ids = []
         contents = []
@@ -151,7 +157,7 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             temp = []
             words = simpleTokenize(content)
             twLen = float(len(words))
-            sentiScore = afinn.score(stemContent(content))
+            sentiScore = afinn.score(content)
             # posProb, negProb = utilities.classifySentiment(words, happy_log_probs, sad_log_probs)
             readScore = textstat.coleman_liau_index(content)
 
@@ -247,6 +253,8 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
                 # this requires scikit-learn 0.18
                 # model = MLPClassifier(algorithm='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
                 model = LogisticRegression()
+            elif trainMode == 'NaiveBayes':
+                model = MultinomialNB()
             elif trainMode == 'RF':
                 model = ExtraTreesClassifier(n_estimators=50, random_state=0)
             elif trainMode == 'Ada':
@@ -311,13 +319,8 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
 if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
-    outputFilename = 'results/temp.result'
 
-    runModel(1, 'totalGroup', 0, 0, 'MLP', outputFile=outputFilename)
-    runModel(1, 'totalGroup', 2, 1, 'MLP', outputFile=outputFilename)
-    runModel(1, 'totalGroup', 0, 0, 'RF', outputFile=outputFilename)
-    runModel(1, 'totalGroup', 0, 0, 'SVM', outputFile=outputFilename)
-    runModel(1, 'totalGroup', 2, 4, 'SVM', outputFile=outputFilename)
+    runModel(1, 'totalGroup', 2, 4, 'SVM')
 
     '''
     #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
@@ -325,16 +328,4 @@ if __name__ == "__main__":
     #run(5, 'topicGroup', 0, 0, 'SVM', outputFile=outputFilename)
     #run(5, 'simGroup', 0, 0, 'SVM', outputFile=outputFilename)
     #run(1, 'totalGroup', 0, 0, 'RF', outputFile=outputFilename)
-
-    #run(3, 'brandGroup', 2, 1, outputFile=outputFilename)
-    #run(3, 'subBrandGroup', 2, 1, outputFile=outputFilename)
-    #run(5, 'topicGroup', 2, 1, outputFile=outputFilename)
-    #run(5, 'simGroup', 2, 1, outputFile=outputFilename)
-    run(1, 'totalGroup', 2, 1, outputFile=outputFilename)
-
-    run(3, 'brandGroup', 2, 4, outputFile=outputFilename)
-    run(3, 'subBrandGroup', 2, 4, outputFile=outputFilename)
-    run(5, 'topicGroup', 2, 4, outputFile=outputFilename)
-    run(5, 'simGroup', 2, 4, outputFile=outputFilename)
-    run(1, 'totalGroup', 2, 4, outputFile=outputFilename)
     '''
