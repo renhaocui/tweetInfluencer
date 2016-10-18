@@ -584,7 +584,7 @@ def similarityGrouper2(groupSize):
 
 if __name__ == '__main__':
     totalGrouper()
-    brandGrouper('subBrandGroup', 3)
+    #brandGrouper('subBrandGroup', 3)
     #brandGrouper('brandGroup', 3)
-    topicGrouper(5)
-    similarityGrouper(5)
+    #topicGrouper(5)
+    #similarityGrouper(5)

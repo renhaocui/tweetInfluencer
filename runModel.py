@@ -173,17 +173,17 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             temp.append(twLen)
 
             # temp.append(content.count('URRL'))
-            if content.count('URRL') > 0:
+            if content.count('http://URL') > 0:
                 temp.append(1)
             else:
                 temp.append(0)
             # temp.append(content.count('HHTTG'))
-            if content.count('HHTTG') > 0:
+            if content.count('#HTG') > 0:
                 temp.append(1)
             else:
                 temp.append(0)
             # temp.append(content.count('USSERNM'))
-            if content.count('USSERNM') > 0:
+            if content.count('@URNM') > 0:
                 temp.append(1)
             else:
                 temp.append(0)
@@ -335,8 +335,9 @@ if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
 
-    runModel(1, 'totalGroup', 2, 1, 'MaxEnt')
-    runModel(1, 'totalGroup', 2, 4, 'MaxEnt')
+    runModel(1, 'totalGroup', 2, 1, 'SVM')
+    runModel(1, 'totalGroup', 2, 0, 'SVM')
+    runModel(1, 'totalGroup', 2, 4, 'SVM')
 
     '''
     #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
