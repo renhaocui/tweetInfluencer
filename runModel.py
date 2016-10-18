@@ -6,11 +6,11 @@ import utilities
 from textstat.textstat import textstat
 from sklearn.feature_extraction.text import *
 from nltk.stem.porter import *
-from sklearn import cross_validation
+from sklearn.model_selection import train_test_split
 from tokenizer import simpleTokenize
 from scipy.sparse import hstack, csr_matrix
 from sklearn import svm
-# from sklearn.neural_network import MLPClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier
 # from sklearn.metrics import confusion_matrix
@@ -65,6 +65,9 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
         scores = []
         days = []
         time = []
+        authorStatusCount = []
+        authorFavoriteCount = []
+        authorListedCount = []
         labels = []
         parseLength = []
         headCount = []
@@ -79,10 +82,13 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             seg = line.strip().split(' :: ')
             text = seg[3]
             username = seg[7].split(';')
-            time.append(utilities.hourMapper(seg[2]))
+            time.append(utilities.hourMapper(int(seg[2])))
             day = seg[1]
             score = float(seg[0])
             ids.append(seg[5])
+            authorStatusCount.append(float(seg[8]))
+            authorFavoriteCount.append(float(seg[9]))
+            authorListedCount.append(float(seg[10]))
             usernames.append(username)
             days.append(dayMapper[day])
             contents.append(text)
@@ -93,10 +99,13 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             seg = line.strip().split(' :: ')
             text = seg[3]
             username = seg[7].split(';')
-            time.append(utilities.hourMapper(seg[2]))
+            time.append(utilities.hourMapper(int(seg[2])))
             day = seg[1]
             score = float(seg[0])
             ids.append(seg[5])
+            authorStatusCount.append(float(seg[8]))
+            authorFavoriteCount.append(float(seg[9]))
+            authorListedCount.append(float(seg[10]))
             usernames.append(username)
             days.append(dayMapper[day])
             contents.append(text)
@@ -183,6 +192,12 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             temp.append(readScore)
             temp.append(parseLength[index] / twLen)
             temp.append(headCount[index] / twLen)
+
+            #author meta features
+            #temp.append(authorStatusCount[index])
+            #temp.append(authorFavoriteCount[index])
+            #temp.append(authorListedCount[index])
+
             # temp.append(days[index])
             # temp.append(time[index])
             temp += POScounts[index]
@@ -247,11 +262,9 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
         print 'running 5-fold CV...'
         for i in range(5):
             print 'case ' + str(i)
-            feature_train, feature_test, label_train, label_test = cross_validation.train_test_split(features, classes, test_size=0.2, random_state=0)
+            feature_train, feature_test, label_train, label_test = train_test_split(features, classes, test_size=0.2, random_state=0)
 
             if trainMode == 'MaxEnt':
-                # this requires scikit-learn 0.18
-                # model = MLPClassifier(algorithm='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
                 model = LogisticRegression()
             elif trainMode == 'NaiveBayes':
                 model = MultinomialNB()
@@ -259,6 +272,8 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
                 model = ExtraTreesClassifier(n_estimators=50, random_state=0)
             elif trainMode == 'Ada':
                 model = AdaBoostClassifier()
+            elif trainMode == 'MLP':
+                model = MLPClassifier(activation='logistic', solver='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
             else:
                 model = svm.SVC()
 
@@ -320,7 +335,8 @@ if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
 
-    runModel(1, 'totalGroup', 2, 4, 'SVM')
+    runModel(1, 'totalGroup', 2, 1, 'MaxEnt')
+    runModel(1, 'totalGroup', 2, 4, 'MaxEnt')
 
     '''
     #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)

@@ -43,7 +43,7 @@ def extractor():
     tempData = {}
     tempOutput = {}
     posCount = {'N': 0, 'V': 0, 'A': 0}
-    negLength = []
+
     posData = []
     negData = []
     for line in posFile:
@@ -95,7 +95,7 @@ def extractor():
             negLengthFile.write(str(longLen) + ' :: ' + negData[index] + '\n')
             negHeadCountFile.write(str(len(outputHeads(tempOutput).split())) + ' :: ' + negData[index] + '\n')
             negPOSCountFile.write(str(posCount['N']) + ' ' + str(posCount['V']) + ' ' + str(posCount['A']) + ' :: ' + negData[index] + '\n')
-            negLength.append(longLen)
+
             tempData = {}
             tempOutput = {}
             posCount = {'N': 0, 'V': 0, 'A': 0}
