@@ -273,7 +273,7 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             elif trainMode == 'Ada':
                 model = AdaBoostClassifier()
             elif trainMode == 'MLP':
-                model = MLPClassifier(activation='logistic', solver='sgd', activation='logistic', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
+                model = MLPClassifier(activation='logistic', solver='sgd', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
             else:
                 model = svm.SVC()
 
