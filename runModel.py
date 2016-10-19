@@ -194,12 +194,12 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             temp.append(headCount[index] / twLen)
 
             #author meta features
-            #temp.append(authorStatusCount[index])
-            #temp.append(authorFavoriteCount[index])
-            #temp.append(authorListedCount[index])
+            temp.append(authorStatusCount[index])
+            temp.append(authorFavoriteCount[index])
+            temp.append(authorListedCount[index])
 
-            # temp.append(days[index])
-            # temp.append(time[index])
+            temp.append(days[index])
+            temp.append(time[index])
             temp += POScounts[index]
             # temp.append(content.count('!'))
             if content.count('!') > 0:
@@ -325,6 +325,7 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
         resultFile.write(str(outputRecall) + '\n')
         resultFile.write(str(outputAccuracy) + '\n')
         resultFile.write(str(outputF1) + '\n')
+        resultFile.write(str(aucSum/5) + '\n')
         resultFile.write('\n')
         resultFile.flush()
 
@@ -335,9 +336,9 @@ if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
 
-    runModel(1, 'totalGroup', 2, 1, 'SVM')
-    runModel(1, 'totalGroup', 2, 0, 'SVM')
-    runModel(1, 'totalGroup', 2, 4, 'SVM')
+    runModel(1, 'totalGroup', 2, 1, 'MLP')
+    runModel(1, 'totalGroup', 2, 0, 'MLP')
+    runModel(1, 'totalGroup', 2, 4, 'MLP')
 
     '''
     #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
