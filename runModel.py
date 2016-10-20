@@ -300,9 +300,9 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             '''
             accuracy = model.score(feature_test, label_test)
 
-            precision = sklearn.metrics.precision_score(label_test, predictions, average='micro')
-            recall = sklearn.metrics.recall_score(label_test, predictions, average='micro')
-            f1 = sklearn.metrics.f1_score(label_test, predictions, average='micro')
+            precision = sklearn.metrics.precision_score(label_test, predictions)
+            recall = sklearn.metrics.recall_score(label_test, predictions)
+            f1 = sklearn.metrics.f1_score(label_test, predictions)
             auc = sklearn.metrics.roc_auc_score(label_test, predictions)
             aucSum += auc
             precisionSum += precision
@@ -344,9 +344,13 @@ if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
 
-    runModel(1, 'totalGroup', 2, 1, 'SVM')
-    runModel(1, 'totalGroup', 2, 0, 'SVM')
-    runModel(1, 'totalGroup', 2, 4, 'SVM')
+    runModel(1, 'totalGroup', 2, 1, 'RF')
+    runModel(1, 'totalGroup', 2, 0, 'RF')
+    runModel(1, 'totalGroup', 2, 4, 'RF')
+
+    runModel(1, 'totalGroup', 2, 1, 'Ada')
+    runModel(1, 'totalGroup', 2, 0, 'Ada')
+    runModel(1, 'totalGroup', 2, 4, 'Ada')
 
     '''
     #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
