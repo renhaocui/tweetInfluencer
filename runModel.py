@@ -13,8 +13,7 @@ from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier
-# from sklearn.metrics import confusion_matrix
-from sklearn.metrics import roc_auc_score
+import sklearn.metrics
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.naive_bayes import MultinomialNB
 import sys
@@ -256,6 +255,7 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
 
         precisionSum = 0.0
         recallSum = 0.0
+        f1Sum = 0.0
         accuracySum = 0.0
         aucSum = 0.0
         resultFile.flush()
@@ -273,19 +273,20 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             elif trainMode == 'Ada':
                 model = AdaBoostClassifier()
             elif trainMode == 'MLP':
-                model = MLPClassifier(activation='logistic', solver='sgd', learning_rate_init=0.02, learning_rate='constant', batch_size=10)
+                model = MLPClassifier(activation='logistic', solver='sgd', learning_rate_init=0.02, learning_rate='constant', batch_size=100)
             else:
                 model = svm.SVC()
 
             model.fit(feature_train, label_train)
             predictions = model.predict(feature_test)
 
-            correctCount = 0.0
-            totalCount = 0.0
+            #correctCount = 0.0
+            #totalCount = 0.0
             if len(predictions) != len(label_test):
                 print 'inference error!'
                 resultFile.write('inferece error!\n')
 
+            '''
             for index, label in enumerate(predictions):
                 if label == 1:
                     if label_test[index] == 1:
@@ -296,36 +297,43 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             else:
                 precision = correctCount / totalCount
             recall = correctCount / label_test.count(1)
+            '''
             accuracy = model.score(feature_test, label_test)
 
-            auc = roc_auc_score(label_test, predictions)
+            precision = sklearn.metrics.precision_score(label_test, predictions, average='micro')
+            recall = sklearn.metrics.recall_score(label_test, predictions, average='micro')
+            f1 = sklearn.metrics.f1_score(label_test, predictions, average='micro')
+            auc = sklearn.metrics.roc_auc_score(label_test, predictions)
             aucSum += auc
-            # print confusion_matrix(label_test, predictions)
-
             precisionSum += precision
             recallSum += recall
+            f1Sum += f1
             accuracySum += accuracy
             resultFile.flush()
+            # print confusion_matrix(label_test, predictions)
 
         outputPrecision = precisionSum / 5
         outputRecall = recallSum / 5
         outputAccuracy = accuracySum / 5
+        outputF1 = f1Sum / 5
+        outputAUC = aucSum / 5
+        '''
         if (outputRecall + outputPrecision) == 0:
             outputF1 = 0.0
         else:
             outputF1 = 2 * outputRecall * outputPrecision / (outputRecall + outputPrecision)
-
+        '''
         print outputPrecision
         print outputRecall
-        print outputAccuracy
         print outputF1
-        print aucSum / 5
+        print outputAUC
+        print outputAccuracy
         print ''
         resultFile.write(str(outputPrecision) + '\n')
         resultFile.write(str(outputRecall) + '\n')
-        resultFile.write(str(outputAccuracy) + '\n')
         resultFile.write(str(outputF1) + '\n')
-        resultFile.write(str(aucSum/5) + '\n')
+        resultFile.write(str(outputAUC) + '\n')
+        resultFile.write(str(outputAccuracy) + '\n')
         resultFile.write('\n')
         resultFile.flush()
 
@@ -336,9 +344,9 @@ if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
 
-    runModel(1, 'totalGroup', 2, 1, 'MLP')
-    runModel(1, 'totalGroup', 2, 0, 'MLP')
-    runModel(1, 'totalGroup', 2, 4, 'MLP')
+    runModel(1, 'totalGroup', 2, 1, 'SVM')
+    runModel(1, 'totalGroup', 2, 0, 'SVM')
+    runModel(1, 'totalGroup', 2, 4, 'SVM')
 
     '''
     #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
