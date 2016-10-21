@@ -37,7 +37,7 @@ def stemContent(input):
 
 # vectorMode 1: tfidf, 2: binaryCount
 # featureMode 0: semantic only, 1: vector only, 2: both
-def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
+def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablationIndex):
     outputFile = 'results/'+groupTitle+'_'+trainMode+'.result'
     resultFile = open(outputFile, 'a')
     mentionMapper = utilities.mapMention('dataset/experiment/mention.json')
@@ -71,7 +71,7 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
         parseLength = []
         headCount = []
         usernames = []
-        semanticFeatures = []
+        additionalFeatures = []
         classes = []
         POScounts = []
 
@@ -171,69 +171,77 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
 
             temp.append(twLen)
 
-            # temp.append(content.count('URRL'))
-            if content.count('http://URL') > 0:
-                temp.append(1)
-            else:
-                temp.append(0)
-            # temp.append(content.count('HHTTG'))
-            if content.count('#HTG') > 0:
-                temp.append(1)
-            else:
-                temp.append(0)
-            # temp.append(content.count('USSERNM'))
-            if content.count('@URNM') > 0:
-                temp.append(1)
-            else:
-                temp.append(0)
+            if ablationIndex != 0:
+                temp.append(sentiScore / twLen)
+            if ablationIndex != 1:
+                temp.append(readScore)
+                temp.append(parseLength[index] / twLen)
+                temp.append(headCount[index] / twLen)
+            if ablationIndex != 2:
+                #author meta features
+                temp.append(authorStatusCount[index])
+                temp.append(authorFavoriteCount[index])
+                temp.append(authorListedCount[index])
+            if ablationIndex != 3:
+                temp.append(days[index])
+                temp.append(time[index])
+            if ablationIndex != 4:
+                if any(char.isdigit() for char in content):
+                    temp.append(1)
+                else:
+                    temp.append(0)
+            if ablationIndex != 5:
+                temp += POScounts[index]
+            if ablationIndex != 6:
+                # temp.append(content.count('URRL'))
+                if content.count('http://URL') > 0:
+                    temp.append(1)
+                else:
+                    temp.append(0)
+                # temp.append(content.count('HHTTG'))
+                if content.count('#HTG') > 0:
+                    temp.append(1)
+                else:
+                    temp.append(0)
+                # temp.append(content.count('USSERNM'))
+                if content.count('@URNM') > 0:
+                    temp.append(1)
+                else:
+                    temp.append(0)
+            if ablationIndex != 7:
+                # temp.append(content.count('!'))
+                if content.count('!') > 0:
+                    temp.append(1)
+                else:
+                    temp.append(0)
+                # temp.append(content.count('?'))
+                if content.count('?') > 0:
+                    temp.append(1)
+                else:
+                    temp.append(0)
+            if ablationIndex != 8:
+                mentionFlag = 0
+                mentionFollowers = 0
+                userCount = 0.0
+                for user in usernames[index]:
+                    if user in mentionMapper:
+                        userCount += 1
+                        if mentionMapper[user][0] == 1:
+                            mentionFlag = 1
+                        mentionFollowers += mentionMapper[user][1]
+                temp.append(mentionFlag)
 
-            temp.append(sentiScore / twLen)
-            temp.append(readScore)
-            temp.append(parseLength[index] / twLen)
-            temp.append(headCount[index] / twLen)
+                if userCount == 0:
+                    temp.append(0.0)
+                else:
+                    temp.append(mentionFollowers / userCount)
 
-            #author meta features
-            temp.append(authorStatusCount[index])
-            temp.append(authorFavoriteCount[index])
-            temp.append(authorListedCount[index])
-
-            temp.append(days[index])
-            temp.append(time[index])
-            temp += POScounts[index]
-            # temp.append(content.count('!'))
-            if content.count('!') > 0:
-                temp.append(1)
-            else:
-                temp.append(0)
-            # temp.append(content.count('?'))
-            if content.count('?') > 0:
-                temp.append(1)
-            else:
-                temp.append(0)
-
-            mentionFlag = 0
-            mentionFollowers = 0
-            userCount = 0.0
-
-            for user in usernames[index]:
-                if user in mentionMapper:
-                    userCount += 1
-                    if mentionMapper[user][0] == 1:
-                        mentionFlag = 1
-                    mentionFollowers += mentionMapper[user][1]
-            temp.append(mentionFlag)
-
-            if userCount == 0:
-                temp.append(0.0)
-            else:
-                temp.append(mentionFollowers / userCount)
-
-            semanticFeatures.append(numpy.array(temp))
+            additionalFeatures.append(numpy.array(temp))
             classes.append(labels[index])
 
         if featureMode == 0:
             resultFile.write('semantic features only \n')
-            features = csr_matrix(numpy.array(semanticFeatures))
+            features = csr_matrix(numpy.array(additionalFeatures))
         elif featureMode == 1:
             resultFile.write('vector features only \n')
             features = vectorMatrix
@@ -248,11 +256,11 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             embedFeatures = []
             for id in ids:
                 embedFeatures.append(numpy.array(distMapper[id]))
-            features = hstack((csr_matrix(numpy.array(semanticFeatures)), csr_matrix(numpy.array(embedFeatures))), format='csr')
+            features = hstack((csr_matrix(numpy.array(additionalFeatures)), csr_matrix(numpy.array(embedFeatures))), format='csr')
         else:
             resultFile.write('vector and semantic features \n')
-            features = hstack((vectorMatrix, csr_matrix(numpy.array(semanticFeatures))), format='csr')
-
+            features = hstack((vectorMatrix, csr_matrix(numpy.array(additionalFeatures))), format='csr')
+        resultFile.write('Ablation Index: '+str(ablationIndex)+'\n')
         precisionSum = 0.0
         recallSum = 0.0
         f1Sum = 0.0
@@ -280,29 +288,14 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode):
             model.fit(feature_train, label_train)
             predictions = model.predict(feature_test)
 
-            #correctCount = 0.0
-            #totalCount = 0.0
             if len(predictions) != len(label_test):
                 print 'inference error!'
                 resultFile.write('inferece error!\n')
 
-            '''
-            for index, label in enumerate(predictions):
-                if label == 1:
-                    if label_test[index] == 1:
-                        correctCount += 1
-                    totalCount += 1
-            if totalCount == 0:
-                precision = 0
-            else:
-                precision = correctCount / totalCount
-            recall = correctCount / label_test.count(1)
-            '''
             accuracy = model.score(feature_test, label_test)
-
-            precision = sklearn.metrics.precision_score(label_test, predictions, average='micro')
-            recall = sklearn.metrics.recall_score(label_test, predictions, average='micro')
-            f1 = sklearn.metrics.f1_score(label_test, predictions, average='micro')
+            precision = sklearn.metrics.precision_score(label_test, predictions)
+            recall = sklearn.metrics.recall_score(label_test, predictions)
+            f1 = sklearn.metrics.f1_score(label_test, predictions)
             auc = sklearn.metrics.roc_auc_score(label_test, predictions)
             aucSum += auc
             precisionSum += precision
@@ -344,14 +337,8 @@ if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
 
-    runModel(1, 'totalGroup', 2, 1, 'SVM')
-    runModel(1, 'totalGroup', 2, 0, 'SVM')
-    runModel(1, 'totalGroup', 2, 4, 'SVM')
+    for index in range(9):
+        print 'Ablation Index: '+str(index)
+        runModel(1, 'totalGroup', 2, 0, 'SVM', index)
+        runModel(1, 'totalGroup', 2, 4, 'SVM', index)
 
-    '''
-    #run(3, 'brandGroup', 0, 0, 'SVM', outputFile=outputFilename)
-    #run(3, 'subBrandGroup', 0, 0, 'SVM',outputFile=outputFilename)
-    #run(5, 'topicGroup', 0, 0, 'SVM', outputFile=outputFilename)
-    #run(5, 'simGroup', 0, 0, 'SVM', outputFile=outputFilename)
-    #run(1, 'totalGroup', 0, 0, 'RF', outputFile=outputFilename)
-    '''
