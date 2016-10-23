@@ -1,61 +1,41 @@
 totalGroup
 group: 0
 binary count 
-vector features only 
-0.500804807383
-0.500804807383
-0.500804807383
-0.5
-0.500804807383
-
-totalGroup
-group: 0
-binary count 
 semantic features only 
-0.580963622706
-0.580963622706
-0.580963622706
-0.581217651018
-0.580963622706
+Ablation Index: 0
+0.620678818353
+0.423184058282
+0.503248821506
+0.581862880388
+0.581607468613
 
 totalGroup
 group: 0
 binary count 
 vector and semantic features 
-totalGroup
-group: 0
-binary count 
-semantic features only 
-0.621570482498
-0.422326976645
-0.502934422046
-0.582186704143
-0.581929391566
-
-totalGroup
-group: 0
-binary count 
-vector and semantic features 
-0.621596888584
-0.58217270195
-0.601239212215
-0.613313350115
-0.613263225668
+Ablation Index: 0
+0.621368107984
+0.581958431541
+0.60101792432
+0.613098734257
+0.613048610366
 
 totalGroup
 group: 0
 binary count 
 semantic features only 
-0.613595166163
-0.4351832012
-0.509213990222
-0.580123844796
-0.579890546196
+Ablation Index: 1
+0.612412534226
+0.431326333833
+0.506160422429
+0.57873281438
+0.578495546732
 
 totalGroup
 group: 0
 binary count 
 vector and semantic features 
+Ablation Index: 1
 0.621281464531
 0.581744161131
 0.600863118291
@@ -66,84 +46,175 @@ totalGroup
 group: 0
 binary count 
 semantic features only 
-0.620031796502
-0.41782729805
-0.499231950845
-0.580474268114
-0.580212469149
+Ablation Index: 2
+0.561038446294
+0.606599528605
+0.582930093689
+0.565230116839
+0.565296705655
 
 totalGroup
 group: 0
 binary count 
 vector and semantic features 
-0.621510297483
+Ablation Index: 2
+0.526075022873
+0.862438397257
+0.653515181036
+0.541494349102
+0.54201094538
+
+totalGroup
+group: 0
+binary count 
+semantic features only 
+Ablation Index: 3
+0.620921305182
+0.415898864367
+0.498139355832
+0.580584857807
+0.5803197768
+
+totalGroup
+group: 0
+binary count 
+vector and semantic features 
+Ablation Index: 3
+0.621368107984
 0.581958431541
-0.601084430674
-0.61320621491
-0.613155918017
+0.60101792432
+0.613098734257
+0.613048610366
 
 totalGroup
 group: 0
 binary count 
 semantic features only 
-0.576049943246
-0.652453396186
-0.611875816337
-0.585362553639
-0.58547054405
+Ablation Index: 4
+0.619466248038
+0.422755517463
+0.502547121752
+0.581111206711
+0.580856315055
 
 totalGroup
 group: 0
 binary count 
 vector and semantic features 
-0.603626943005
-0.599100064281
-0.601354984407
-0.602215552347
-0.602210537611
-
-totalGroup
-group: 0
-binary count 
-semantic features only 
-0.619215938303
-0.412899078637
-0.495436431418
-0.579084964942
-0.578817469686
-
-totalGroup
-group: 0
-binary count 
-vector and semantic features 
-0.621596888584
-0.58217270195
-0.601239212215
-0.613313350115
-0.613263225668
-
-totalGroup
-group: 0
-binary count 
-semantic features only 
-0.622034956305
-0.427040925648
-0.506415957312
-0.583361391457
-0.583109775727
-
-totalGroup
-group: 0
-binary count 
-vector and semantic features 
-0.621510297483
+Ablation Index: 4
+0.621368107984
 0.581958431541
-0.601084430674
-0.61320621491
-0.613155918017
+0.60101792432
+0.613098734257
+0.613048610366
 
 totalGroup
 group: 0
 binary count 
 semantic features only 
-Ablation Index: 0
+Ablation Index: 5
+0.621337579618
+0.418041568459
+0.499807864737
+0.581226287239
+0.580963622706
+
+totalGroup
+group: 0
+binary count 
+vector and semantic features 
+Ablation Index: 5
+0.621368107984
+0.581958431541
+0.60101792432
+0.613098734257
+0.613048610366
+
+totalGroup
+group: 0
+binary count 
+semantic features only 
+Ablation Index: 6
+0.623885350318
+0.419755731733
+0.501857307545
+0.582943214104
+0.582680545123
+
+totalGroup
+group: 0
+binary count 
+vector and semantic features 
+Ablation Index: 6
+0.621368107984
+0.581958431541
+0.60101792432
+0.613098734257
+0.613048610366
+
+totalGroup
+group: 0
+binary count 
+semantic features only 
+Ablation Index: 7
+0.62132236634
+0.42082708378
+0.501788451712
+0.581759199671
+0.581500160961
+
+totalGroup
+group: 0
+binary count 
+vector and semantic features 
+Ablation Index: 7
+0.621368107984
+0.581958431541
+0.60101792432
+0.613098734257
+0.613048610366
+
+totalGroup
+group: 0
+binary count 
+semantic features only 
+Ablation Index: 8
+0.576448243115
+0.650310692093
+0.611155859847
+0.585473488781
+0.585577851701
+
+totalGroup
+group: 0
+binary count 
+vector and semantic features 
+Ablation Index: 8
+0.60384283247
+0.59931433469
+0.601570061297
+0.602430168205
+0.602425152913
+
+totalGroup
+group: 0
+binary count 
+semantic features only 
+Ablation Index: 1
+0.610144500147
+0.443325476752
+0.513526929759
+0.579573314472
+0.579354007941
+
+totalGroup
+group: 0
+binary count 
+vector and semantic features 
+Ablation Index: 1
+0.621139327385
+0.581744161131
+0.600796636424
+0.612884118399
+0.612833995064
+

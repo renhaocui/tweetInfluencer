@@ -1,7 +1,7 @@
 __author__ = 'renhao.cui'
 from scipy import stats
 import json
-import statistics as stat
+from datetime import datetime
 import tweetTextCleaner
 import sys
 
@@ -54,8 +54,6 @@ def outlierExtractor():
         print brand
         outputFile = open('dataset/brands/'+brand+'.data', 'w')
         outLierFile = open('dataset/exceptions/'+brand+'.outliers', 'w')
-        #rankedFile1 = open('adData/analysis/ranked/1/'+brand+'.pos', 'w')
-        #rankedFile2 = open('adData/analysis/ranked/2/'+brand+'.neg', 'w')
         brandData = []
         brandScoreList = []
 
@@ -83,10 +81,19 @@ def outlierExtractor():
                     else:
                         ratio = favorite/retweet
                     statFile.write(str(favorite)+'\t'+str(retweet)+'\t'+str(followers)+'\t'+str(ratio)+'\n')
-                    day = data['create_at'].split()[0]
-                    hour = data['create_at'].split()[3].split(':')[0]
+
+                    dateTemp = data['create_at'].split()
+                    day = dateTemp[0]
+                    hour = dateTemp[3].split(':')[0]
+                    postDate = dateTemp[1]+' '+dateTemp[2]+' '+dateTemp[5]
+                    dateTemp = data['user_create_at'].split()
+                    authorDate = dateTemp[1]+' '+dateTemp[2]+' '+dateTemp[5]
+                    postData_object = datetime.strptime(postDate, '%b %d %Y')
+                    authorData_object = datetime.strptime(authorDate, '%b %d %Y')
+                    authorInterval = float((postData_object-authorData_object).days)
+
                     labelScore = (2.0*retweet + favorite)*10000/followers
-                    brandData.append((content, labelScore, tweetID, day, hour, data['mentions'], data['hashtags'], author_statuses_count, author_favorite_count, author_listed_count))
+                    brandData.append((content, labelScore, tweetID, day, hour, data['mentions'], data['hashtags'], author_statuses_count, author_favorite_count, author_listed_count, authorInterval))
                     brandScoreList.append(labelScore)
                 else:
                     text = data['text'].encode('utf-8').replace('\r', ' ').replace('\n', ' ')
@@ -103,26 +110,26 @@ def outlierExtractor():
         '''
         outputData = []
         for index, item in enumerate(brandData):
-            outputData.append((float(item[1]), float(zScores[index]), item[2], item[0], item[3], item[4], item[5], item[6], item[7], item[8], item[9]))
+            outputData.append((float(item[1]), float(zScores[index]), item[2], item[0], item[3], item[4], item[5], item[6], item[7], item[8], item[9], item[10]))
 
         cleanData = []
         cleanScore = []
         sorted_output = sorted(outputData, key=lambda x: x[0])
-        for (score, z, tweetID, content, day, hour, mentions, hashtags, statusCount, favoriteCount, listedCount) in reversed(sorted_output):
+        for (score, z, tweetID, content, day, hour, mentions, hashtags, statusCount, favoriteCount, listedCount, authorInterval) in reversed(sorted_output):
             if z > 2:
                 outLierFile.write(str(score)+' : '+str(z)+' : '+' : '+str(tweetID)+' : '+content+'\n')
                 totalOutLierFile.write(str(score)+' : '+str(z)+' : '+' : '+str(tweetID)+' : '+content+'\n')
             else:
-                cleanData.append((score, z, content, day, hour, tweetID, mentions, hashtags, statusCount, favoriteCount, listedCount))
+                cleanData.append((score, z, content, day, hour, tweetID, mentions, hashtags, statusCount, favoriteCount, listedCount, authorInterval))
                 cleanScore.append(score)
                 totalCleanScore.append(score)
-                totalCleanData.append((score, z, content, day, hour, statusCount, favoriteCount, listedCount))
+                totalCleanData.append((score, z, content, day, hour, statusCount, favoriteCount, listedCount, authorInterval))
                 outputFile.write(str(score)+' : '+str(z)+' : '+' : '+str(tweetID)+' : '+content+'\n')
                 totalOutputFile.write(str(score)+' : '+str(z)+' : '+' : '+str(tweetID)+' : '+content+'\n')
 
         # label assignment: 30/70 split
         cleanSize = len(cleanScore)
-        for count, (score, z, content, day, hour, tweetID, mentions, hashtags, statusCount, favoriteCount, listedCount) in enumerate(cleanData):
+        for count, (score, z, content, day, hour, tweetID, mentions, hashtags, statusCount, favoriteCount, listedCount, authorInterval) in enumerate(cleanData):
             hashtagOutput = ''
             mentionsOutput = ''
             for ht in hashtags:
@@ -141,16 +148,16 @@ def outlierExtractor():
                 mentionsOutput = 'NONE'
             else:
                 mentionsOutput = mentionsOutput[:-1]
-            if count <= 0.3 * cleanSize:
+            if count <= 0.5 * cleanSize:
                 #rankedFile1.write(str(score)+' : '+day+' : '+hour+' : '+unicode(content, errors='ignore')+'\n')
                 try:
-                    totalPosFile.write(str(score)+' :: '+day+' :: '+hour+' :: '+unicode(content, errors='ignore')+' :: '+brand+' :: '+str(tweetID)+' :: '+hashtagOutput+' :: '+mentionsOutput+' :: '+str(statusCount)+' :: '+str(favoriteCount)+' :: '+str(listedCount)+'\n')
+                    totalPosFile.write(str(score)+' :: '+day+' :: '+hour+' :: '+unicode(content, errors='ignore')+' :: '+brand+' :: '+str(tweetID)+' :: '+hashtagOutput+' :: '+mentionsOutput+' :: '+str(statusCount)+' :: '+str(favoriteCount)+' :: '+str(listedCount)+' :: '+str(authorInterval)+'\n')
                 except:
                     print content
             else:
                 #rankedFile2.write(str(score)+' : '+day+' : '+hour+' : '+unicode(content, errors='ignore')+'\n')
                 try:
-                    totalNegFile.write(str(score)+' :: '+day+' :: '+hour+' :: '+unicode(content, errors='ignore')+' :: '+brand+' :: '+str(tweetID)+' :: '+hashtagOutput+' :: '+mentionsOutput+' :: '+str(statusCount)+' :: '+str(favoriteCount)+' :: '+str(listedCount)+'\n')
+                    totalNegFile.write(str(score)+' :: '+day+' :: '+hour+' :: '+unicode(content, errors='ignore')+' :: '+brand+' :: '+str(tweetID)+' :: '+hashtagOutput+' :: '+mentionsOutput+' :: '+str(statusCount)+' :: '+str(favoriteCount)+' :: '+str(listedCount)+' :: '+str(authorInterval)+'\n')
                 except:
                     print content
         '''
@@ -174,8 +181,6 @@ def outlierExtractor():
         '''
         outLierFile.close()
         outputFile.close()
-        #rankedFile1.close()
-        #rankedFile2.close()
 
     hashtagFile = open('dataset/experiment/hashtag.list', 'w')
     mentionFile = open('dataset/experiment/mention.list', 'w')
@@ -191,6 +196,8 @@ def outlierExtractor():
     totalDistFile.close()
     totalOutLierFile.close()
     totalOutputFile.close()
+    totalPosFile.close()
+    totalNegFile.close()
     outputDistFile.close()
     statFile.close()
     expFile.close()

@@ -169,11 +169,10 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
             # posProb, negProb = utilities.classifySentiment(words, happy_log_probs, sad_log_probs)
             readScore = textstat.coleman_liau_index(content)
 
-            temp.append(twLen)
-
             if ablationIndex != 0:
                 temp.append(sentiScore / twLen)
             if ablationIndex != 1:
+                temp.append(twLen)
                 temp.append(readScore)
                 temp.append(parseLength[index] / twLen)
                 temp.append(headCount[index] / twLen)
@@ -337,8 +336,5 @@ if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
 
-    for index in range(9):
-        print 'Ablation Index: '+str(index)
-        runModel(1, 'totalGroup', 2, 0, 'SVM', index)
-        runModel(1, 'totalGroup', 2, 4, 'SVM', index)
-
+    runModel(1, 'totalGroup', 2, 0, 'SVM', 1)
+    runModel(1, 'totalGroup', 2, 4, 'SVM', 1)

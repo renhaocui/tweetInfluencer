@@ -26,7 +26,7 @@ def blend(fileSize, offset):
                 if tweetID not in tweetIDSet:
                     totalIndex += 1
                     tweetIDSet.add(tweetID)
-                    temp = {'id': tweetID, 'text': data['text'], 'create_at': data['created_at']}
+                    temp = {'id': tweetID, 'text': data['text'], 'create_at': data['created_at'], 'user_create_at': data['user']['created_at']}
                     hashtags = []
                     if 'hashtags' in data['entities']:
                         for tag in data['entities']['hashtags']:
