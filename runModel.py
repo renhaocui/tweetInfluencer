@@ -19,7 +19,7 @@ from sklearn.naive_bayes import MultinomialNB
 import sys
 
 reload(sys)
-sys.setdefaultencoding('utf8')
+sys.setdefaultencoding('utf-8')
 
 dayMapper = {'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6, 'Sun': 7}
 
@@ -67,6 +67,7 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
         authorStatusCount = []
         authorFavoriteCount = []
         authorListedCount = []
+        authorIntervals = []
         labels = []
         parseLength = []
         headCount = []
@@ -74,9 +75,9 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
         additionalFeatures = []
         classes = []
         POScounts = []
+        followers = []
 
         print 'loading...'
-
         for line in posFile:
             seg = line.strip().split(' :: ')
             text = seg[3]
@@ -88,7 +89,9 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
             authorStatusCount.append(float(seg[8]))
             authorFavoriteCount.append(float(seg[9]))
             authorListedCount.append(float(seg[10]))
+            authorIntervals.append(float(seg[11]))
             usernames.append(username)
+            followers.append(float(seg[12]))
             days.append(dayMapper[day])
             contents.append(text)
             scores.append(score)
@@ -105,7 +108,9 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
             authorStatusCount.append(float(seg[8]))
             authorFavoriteCount.append(float(seg[9]))
             authorListedCount.append(float(seg[10]))
+            authorIntervals.append(float(seg[11]))
             usernames.append(username)
+            followers.append(float(seg[12]))
             days.append(dayMapper[day])
             contents.append(text)
             scores.append(score)
@@ -177,10 +182,9 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
                 temp.append(parseLength[index] / twLen)
                 temp.append(headCount[index] / twLen)
             if ablationIndex != 2:
-                #author meta features
-                temp.append(authorStatusCount[index])
-                temp.append(authorFavoriteCount[index])
-                temp.append(authorListedCount[index])
+                temp.append(authorStatusCount[index]/authorIntervals[index])
+                temp.append(authorFavoriteCount[index]/authorStatusCount[index])
+                temp.append(authorListedCount[index]/followers[index])
             if ablationIndex != 3:
                 temp.append(days[index])
                 temp.append(time[index])
@@ -335,6 +339,8 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
 if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
-
-    runModel(1, 'totalGroup', 2, 0, 'SVM', 1)
-    runModel(1, 'totalGroup', 2, 4, 'SVM', 1)
+    runModel(1, 'totalGroup', 2, 0, 'SVM', 100)
+    runModel(1, 'totalGroup', 2, 4, 'SVM', 100)
+    for index in range(9):
+        runModel(1, 'totalGroup', 2, 0, 'SVM', index)
+        #runModel(1, 'totalGroup', 2, 4, 'SVM', 100)
