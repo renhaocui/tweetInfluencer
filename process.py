@@ -15,6 +15,6 @@ contenter.contenterExtractor()
 # need to run TweeboParser here
 parserExtractor.extractor()
 # grouping the data
-tweetGrouper.runGrouper()
+tweetGrouper.totalGrouper()
 # run the experiment
 runModel.runModel(1, 'totalGroup', 2, 4, 'SVM', outputFile='results/temp.result')

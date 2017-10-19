@@ -7,7 +7,7 @@ import sys
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-filterTerms = ['iphone 7', 'pikachu', 'pokemon go']
+filterTerms = ['iphone 7', 'pikachu', 'pokemon go', 'macbook pro']
 
 
 def outlierExtractor():
@@ -129,7 +129,7 @@ def outlierExtractor():
                 outputFile.write(str(score) + ' : ' + str(z) + ' : ' + ' : ' + str(tweetID) + ' : ' + content + '\n')
                 totalOutputFile.write(str(score) + ' : ' + str(z) + ' : ' + ' : ' + str(tweetID) + ' : ' + content + '\n')
 
-        # label assignment: 30/70 split
+        # label assignment: 50/50 split
         cleanSize = len(cleanScore)
         for count, (score, z, content, day, hour, tweetID, mentions, hashtags, statusCount, favoriteCount, listedCount, authorInterval, followers) in enumerate(cleanData):
             hashtagOutput = ''

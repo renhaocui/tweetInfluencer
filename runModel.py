@@ -17,6 +17,7 @@ import sklearn.metrics
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.naive_bayes import MultinomialNB
 import sys
+from sklearn.model_selection import KFold
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -77,7 +78,7 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
         POScounts = []
         followers = []
 
-        print 'loading...'
+        print 'loading data...'
         for line in posFile:
             seg = line.strip().split(' :: ')
             text = seg[3]
@@ -271,10 +272,23 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
         aucSum = 0.0
         resultFile.flush()
         print 'running 5-fold CV...'
-        for i in range(5):
-            print 'case ' + str(i)
-            feature_train, feature_test, label_train, label_test = train_test_split(features, classes, test_size=0.2, random_state=0)
 
+        roundNum = 0
+        kf = KFold(n_splits=5, shuffle=True)
+        for train_indices, test_indices in kf.split(classes):
+        #for i in range(5):
+            #print 'case ' + str(i)
+            print 'Round: ' + str(roundNum)
+            #feature_train, feature_test, label_train, label_test = train_test_split(features, classes, test_size=0.2, random_state=0)
+            feature_train, feature_test = features[train_indices], features[test_indices]
+            label_train = []
+            label_test = []
+            for train_index in train_indices:
+                label_train.append(classes[train_index])
+            for test_index in test_indices:
+                label_test.append(classes[test_index])
+            roundNum += 1
+            print label_test
             if trainMode == 'MaxEnt':
                 model = LogisticRegression()
             elif trainMode == 'NaiveBayes':
@@ -339,8 +353,8 @@ def runModel(groupSize, groupTitle, vectorMode, featureMode, trainMode, ablation
 if __name__ == "__main__":
     # vectorMode 1: tfidf, 2: binaryCount, 3:LDA dist
     # featureMode 0: content only, 1: ngram only, 2: embedding only, 3: embedding and semantic, 4: content and ngram
-    runModel(1, 'totalGroup', 2, 0, 'SVM', 100)
-    runModel(1, 'totalGroup', 2, 4, 'SVM', 100)
-    for index in range(9):
-        runModel(1, 'totalGroup', 2, 0, 'SVM', index)
+    runModel(1, 'totalGroup', 4, 0, 'SVM', 100)
+    #runModel(1, 'totalGroup', 4, 4, 'SVM', 100)
+    #for index in range(9):
+        #runModel(1, 'totalGroup', 2, 0, 'SVM', index)
         #runModel(1, 'totalGroup', 2, 4, 'SVM', 100)
